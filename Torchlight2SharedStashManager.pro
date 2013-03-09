@@ -35,7 +35,8 @@ HEADERS  += mainwindow.h \
     stashestable.h \
     settingstabpage.h \
     torchlight2stashconverter.h \
-    optionkeys.h
+    optionkeys.h \
+    tools.h
 
 FORMS    += mainwindow.ui
 
