@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     stashestable.cpp \
     settingstabpage.cpp \
     torchlight2stashconverter.cpp \
-    optionkeys.cpp
+    optionkeys.cpp \
+    torchlight2stash.cpp
 
 HEADERS  += mainwindow.h \
     sharedstashlistwidget.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     stashestable.h \
     settingstabpage.h \
     torchlight2stashconverter.h \
-    optionkeys.h
+    optionkeys.h \
+    torchlight2stash.h
 
 FORMS    += mainwindow.ui
 

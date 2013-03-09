@@ -9,6 +9,7 @@
 
 #include <torchlight2stashconverter.h>
 #include <optionkeys.h>
+#include <torchlight2stash.h>
 
 #include <iostream>
 using namespace std;
@@ -210,16 +211,18 @@ void MainWindow::OnTestFileDescramblerClicked()
             decryptedFile.close();
         }
 
-        QFile reencryptedFile(reencryptedFilePath);
+//        QFile reencryptedFile(reencryptedFilePath);
 
-        if (reencryptedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        {
-            QByteArray outputBuffer;
-            Torchlight2StashConverter::ScrambleFile(decryptedBytes, outputBuffer);
+//        if (reencryptedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+//        {
+//            QByteArray outputBuffer;
+//            Torchlight2StashConverter::ScrambleFile(decryptedBytes, outputBuffer);
 
-            reencryptedFile.write(outputBuffer);
-            reencryptedFile.close();
-        }
+//            reencryptedFile.write(outputBuffer);
+//            reencryptedFile.close();
+//        }
+
+        Torchlight2Stash stash(decryptedBytes);
     }
 
 
