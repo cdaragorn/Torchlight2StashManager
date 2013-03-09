@@ -20,6 +20,7 @@ void SharedStashListWidget::contextMenuEvent(QContextMenuEvent * inEvent)
 
 void SharedStashListWidget::mousePressEvent(QMouseEvent *event)
 {
+    QListWidget::mousePressEvent(event);
     if (event->button() == Qt::RightButton)
     {
 
@@ -43,6 +44,7 @@ void SharedStashListWidget::OnAction()
 
 void SharedStashListWidget::itemChanged(QListWidgetItem *item)
 {
+    QListWidget::itemChanged(item);
     if (item != NULL)
     {
         QMessageBox::information(this, "something", item->text(), QMessageBox::Ok);
@@ -51,8 +53,9 @@ void SharedStashListWidget::itemChanged(QListWidgetItem *item)
 
 void SharedStashListWidget::dropEvent(QDropEvent *event)
 {
-    if (event != NULL)
-    {
-        event->acceptProposedAction();
-    }
+    QListWidget::dropEvent(event);
+//    if (event != NULL)
+//    {
+//        event->acceptProposedAction();
+//    }
 }

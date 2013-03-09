@@ -32,7 +32,7 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -90,13 +90,16 @@
            <bool>true</bool>
           </property>
           <property name="dragDropOverwriteMode">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="dragDropMode">
            <enum>QAbstractItemView::DragDrop</enum>
           </property>
           <property name="defaultDropAction">
            <enum>Qt::MoveAction</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
           </property>
           <property name="selectionRectVisible">
            <bool>true</bool>
@@ -121,7 +124,17 @@
          </widget>
         </item>
         <item row="2" column="3" colspan="2">
-         <widget class="QListWidget" name="MainTabListStashItemsListWidget"/>
+         <widget class="QListWidget" name="MainTabListStashItemsListWidget">
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragDrop</enum>
+          </property>
+          <property name="defaultDropAction">
+           <enum>Qt::MoveAction</enum>
+          </property>
+         </widget>
         </item>
         <item row="0" column="3" colspan="2">
          <widget class="QLabel" name="MainTabStashContentsLabel">

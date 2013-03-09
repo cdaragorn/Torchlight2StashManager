@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow), mGroupsTable("database.sqlite")
 {
     ui->setupUi(this);
-    ui->MainTabControlWidget->move(0, 0);
+//    ui->MainTabControlWidget->move(0, 0);
 //    QLayout* layout = ui->MainTab->layout();
 //    QPushButton* button = new QPushButton(ui->MainTab);
 //    button->setText("Boogey");
@@ -49,11 +49,11 @@ MainWindow::MainWindow(QWidget *parent) :
 //    layout->addWidget(button);
 //    ui->MainTab->layout()->addWidget(button);
 //    ui->MainTab->addAction(button);
-    QListWidgetItem* item = new QListWidgetItem(ui->SelectListWidget);
-    item->setText("Button");
-    QIcon* icon = new QIcon("://images/solid_iron_chest.png");
+//    QListWidgetItem* item = new QListWidgetItem(ui->SelectListWidget);
+//    item->setText("Button");
+//    QIcon* icon = new QIcon("://images/solid_iron_chest.png");
 
-    item->setIcon(*icon);
+//    item->setIcon(*icon);
 
     LoadUIOptions();
 
@@ -223,6 +223,14 @@ void MainWindow::OnTestFileDescramblerClicked()
 //        }
 
         Torchlight2Stash stash(decryptedBytes);
+
+        QHash<QString, QByteArray*> itemsInStash = stash.StashItems();
+        QList<QString> keys = itemsInStash.keys();
+
+        for (int i = 0; i < keys.count(); ++i)
+        {
+            ui->SelectListWidget->addItem(keys[i]);
+        }
     }
 
 
