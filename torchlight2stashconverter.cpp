@@ -1,7 +1,7 @@
 #include "torchlight2stashconverter.h"
 
 #include <QFile>
-#include <fstream>
+#include <QDebug>
 #include <cstring>
 using namespace std;
 
@@ -88,7 +88,7 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
             {
                 case 0x38:
                 {
-                    cerr << "Beta version file, untested, your mileage may vary\n";
+                    qDebug() << "Beta version file, untested, your mileage may vary";
                     // for beta version we don't need to actually unscramble anything, just lop off the footer
                     // filesize of output will be the size of input minus four
                     outputFileLength = inputFileLength - FOOTER_SIZE;
@@ -98,7 +98,7 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
                 }
                 case 0x40:
                 {
-                    cerr << "Release version 1.9 file, scrambled, no checksum\n";
+                    qDebug() << "Release version 1.9 file, scrambled, no checksum";
                     // filesize of output will be the size of input minus four
                     outputFileLength = inputFileLength - FOOTER_SIZE;
                     inputOffset = BASE_HEADER_SIZE;
@@ -107,7 +107,7 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
                 case 0x41:
                 case 0x42:
                 {
-                    cerr << "Patched version 1.10, 1.11 or 1.12 file, scrambled, with checksum\n";
+                    qDebug() << "Patched version 1.10, 1.11 or 1.12 file, scrambled, with checksum";
                     // filesize of output will be the size of input minus eight
                     outputFileLength = inputFileLength - (CRC_SIZE + FOOTER_SIZE);
                     inputOffset = BASE_HEADER_SIZE + CRC_SIZE;
@@ -116,7 +116,7 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
 
                 default:
                 {
-                    cerr << "Unknown savefile version!\n";
+                    qDebug() << "Unknown savefile version!";
                     isKnownSaveFileVersion = false;
                     break;
                 }
@@ -153,12 +153,12 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
 
                     qint32 calculatedCRC = CalculateChecksum(outputBuffer, outputOffset, dataLength);
 
-                    cerr << "CRC of the data block: Header: " << claimedCRC << " Actual: " << calculatedCRC << endl;
+                    qDebug() << "CRC of the data block: Header: " << claimedCRC << " Actual: " << calculatedCRC;
                 }
 
                 qint32 lengthClaimed = reinterpret_cast<const qint32*>(&(inputBuffer.data()[inputFileLength - 4]))[0];
 
-                cerr << lengthClaimed << endl;
+                qDebug() << lengthClaimed;
 
                 result = true;
             }
