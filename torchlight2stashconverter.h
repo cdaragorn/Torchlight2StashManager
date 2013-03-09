@@ -2,7 +2,6 @@
 #define TORCHLIGHT2STASHCONVERTER_H
 
 #include <QObject>
-#include <iostream>
 
 #define BASE_HEADER_SIZE 5
 #define CRC_SIZE 4
