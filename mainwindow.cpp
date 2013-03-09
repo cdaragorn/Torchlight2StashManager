@@ -180,7 +180,7 @@ void MainWindow::OnOptionsChanged()
 
 void MainWindow::OnTestFileDescramblerClicked()
 {
-    QString torchlight2Folder = mOptions[OptionKeys::Torchlight2SharedStashFile];
+    QString torchlight2StashFile = mOptions[OptionKeys::Torchlight2SharedStashFile];
     QString stashesFolder = mOptions[OptionKeys::StashManagerFolder];
 
     QString decryptedFilePath;
@@ -193,8 +193,34 @@ void MainWindow::OnTestFileDescramblerClicked()
         reencryptedFilePath = stashesFolder + "/re-encryptedStash.bin";
     }
 
-    Torchlight2StashConverter::DescrambleFile(torchlight2Folder, decryptedFilePath);
-    Torchlight2StashConverter::ScrambleFile(decryptedFilePath, reencryptedFilePath);
+    QByteArray decryptedBytes;
+
+    QFile stashFile(torchlight2StashFile);
+
+    if (stashFile.open(QIODevice::ReadOnly))
+    {
+        Torchlight2StashConverter::DescrambleFile(stashFile.readAll(), decryptedBytes);
+        stashFile.close();
+
+        QFile decryptedFile(decryptedFilePath);
+
+        if (decryptedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        {
+            decryptedFile.write(decryptedBytes);
+            decryptedFile.close();
+        }
+
+        QFile reencryptedFile(reencryptedFilePath);
+
+        if (reencryptedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        {
+            QByteArray outputBuffer;
+            Torchlight2StashConverter::ScrambleFile(decryptedBytes, outputBuffer);
+
+            reencryptedFile.write(outputBuffer);
+            reencryptedFile.close();
+        }
+    }
 
 
 }

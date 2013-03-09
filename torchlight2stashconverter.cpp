@@ -66,205 +66,177 @@ static void Scramble(const QByteArray& inputBuffer, qint32 inputOffset, qint32 l
     }
 }
 
-bool Torchlight2StashConverter::DescrambleFile(QString inputFilePath, QString outputFilePath)
+bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QByteArray& outputBuffer)
 {
     bool result = false;
 
-    QFile inputFile(inputFilePath);
-    QFile outputFile(outputFilePath);
+    qint64 inputFileLength = inputBuffer.size();
 
-    if (inputFile.open(QIODevice::ReadOnly) && outputFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    if (inputFileLength > BASE_HEADER_SIZE)
     {
-        qint64 inputFileLength = inputFile.size();
-
-        QByteArray inputBuffer = inputFile.readAll();
-        inputFile.close();
-
-        if (inputFileLength > BASE_HEADER_SIZE)
+        // offset 4 is almost always 0x01, except on corrupted character and stash files
+        if ((quint8)inputBuffer[4] == 0x01)
         {
-            // offset 4 is almost always 0x01, except on corrupted character and stash files
-            if ((quint8)inputBuffer[4] == 0x01)
+            quint32 version = reinterpret_cast<const quint32*>(inputBuffer.data())[0];
+
+            bool isKnownSaveFileVersion = true;
+
+            qint64 inputOffset = 0;
+            qint64 outputFileLength = 0;
+
+            switch(version)
             {
-                quint32 version = reinterpret_cast<quint32*>(inputBuffer.data())[0];
-
-//                bool isScrambled = true;
-                bool isKnownSaveFileVersion = true;
-
-                qint64 inputOffset = 0;
-                qint64 outputFileLength = 0;
-
-                switch(version)
+                case 0x38:
                 {
-                    case 0x38:
-                    {
-                        cerr << "Beta version file, untested, your mileage may vary\n";
-                        // for beta version we don't need to actually unscramble anything, just lop off the footer
-                        // filesize of output will be the size of input minus four
-                        outputFileLength = inputFileLength - FOOTER_SIZE;
-                        inputOffset = BASE_HEADER_SIZE;
+                    cerr << "Beta version file, untested, your mileage may vary\n";
+                    // for beta version we don't need to actually unscramble anything, just lop off the footer
+                    // filesize of output will be the size of input minus four
+                    outputFileLength = inputFileLength - FOOTER_SIZE;
+                    inputOffset = BASE_HEADER_SIZE;
 //                        isScrambled = false;
-                        break;
-                    }
-                    case 0x40:
-                    {
-                        cerr << "Release version 1.9 file, scrambled, no checksum\n";
-                        // filesize of output will be the size of input minus four
-                        outputFileLength = inputFileLength - FOOTER_SIZE;
-                        inputOffset = BASE_HEADER_SIZE;
-                        break;
-                    }
-                    case 0x41:
-                    case 0x42:
-                    {
-                        cerr << "Patched version 1.10, 1.11 or 1.12 file, scrambled, with checksum\n";
-                        // filesize of output will be the size of input minus eight
-                        outputFileLength = inputFileLength - (CRC_SIZE + FOOTER_SIZE);
-                        inputOffset = BASE_HEADER_SIZE + CRC_SIZE;
-                        break;
-                    }
-
-                    default:
-                    {
-                        cerr << "Unknown savefile version!\n";
-                        isKnownSaveFileVersion = false;
-                        break;
-                    }
+                    break;
+                }
+                case 0x40:
+                {
+                    cerr << "Release version 1.9 file, scrambled, no checksum\n";
+                    // filesize of output will be the size of input minus four
+                    outputFileLength = inputFileLength - FOOTER_SIZE;
+                    inputOffset = BASE_HEADER_SIZE;
+                    break;
+                }
+                case 0x41:
+                case 0x42:
+                {
+                    cerr << "Patched version 1.10, 1.11 or 1.12 file, scrambled, with checksum\n";
+                    // filesize of output will be the size of input minus eight
+                    outputFileLength = inputFileLength - (CRC_SIZE + FOOTER_SIZE);
+                    inputOffset = BASE_HEADER_SIZE + CRC_SIZE;
+                    break;
                 }
 
-                if (isKnownSaveFileVersion)
+                default:
                 {
-                    qint64 outputOffset = BASE_HEADER_SIZE;
-                    qint64 dataLength = inputFileLength - (inputOffset + FOOTER_SIZE);
-
-                    QByteArray outputBuffer(outputFileLength, 0);
-
-                    if (version >= 0x40)
-                    {
-                        for (int i = 0; i < BASE_HEADER_SIZE; ++i)
-                        {
-                            outputBuffer[i] = inputBuffer[i];
-                        }
-
-                        // descramble the data and place it in the correct place in the output buffer, after the header
-                        Descramble(inputBuffer, inputOffset, dataLength, outputBuffer, outputOffset);
-                    }
-                    else
-                    {
-                        // just copy the data directly to the output buffer
-                        outputBuffer.resize(dataLength + BASE_HEADER_SIZE);
-                        outputBuffer.replace(0, dataLength + BASE_HEADER_SIZE, inputBuffer);
-//                        memcpy(outputBuffer, inputBuffer, dataLength + BASE_HEADER_SIZE);
-                    }
-
-                    if (version >= 0x41)
-                    {
-                        qint32 claimedCRC = reinterpret_cast<qint32*>(&(inputBuffer.data()[BASE_HEADER_SIZE]))[0];
-
-                        qint32 calculatedCRC = CalculateChecksum(outputBuffer, outputOffset, dataLength);
-
-                        cerr << "CRC of the data block: Header: " << claimedCRC << " Actual: " << calculatedCRC << endl;
-                    }
-
-                    qint32 lengthClaimed = reinterpret_cast<qint32*>(&(inputBuffer.data()[inputFileLength - 4]))[0];
-
-                    cerr << lengthClaimed << endl;
-
-                    outputFile.write(outputBuffer);
-                    outputFile.close();
-//                    outputFile.write((char*)outputBuffer, outputFileLength);
-//                    outputFile.close();
-
-                    result = true;
+                    cerr << "Unknown savefile version!\n";
+                    isKnownSaveFileVersion = false;
+                    break;
                 }
             }
+
+            if (isKnownSaveFileVersion)
+            {
+                qint64 outputOffset = BASE_HEADER_SIZE;
+                qint64 dataLength = inputFileLength - (inputOffset + FOOTER_SIZE);
+
+                outputBuffer.clear();
+                outputBuffer.fill(0, outputFileLength);
+
+                if (version >= 0x40)
+                {
+                    for (int i = 0; i < BASE_HEADER_SIZE; ++i)
+                    {
+                        outputBuffer[i] = inputBuffer[i];
+                    }
+
+                    // descramble the data and place it in the correct place in the output buffer, after the header
+                    Descramble(inputBuffer, inputOffset, dataLength, outputBuffer, outputOffset);
+                }
+                else
+                {
+                    // just copy the data directly to the output buffer
+                    outputBuffer.resize(dataLength + BASE_HEADER_SIZE);
+                    outputBuffer.replace(0, dataLength + BASE_HEADER_SIZE, inputBuffer);
+                }
+
+                if (version >= 0x41)
+                {
+                    qint32 claimedCRC = reinterpret_cast<const qint32*>(&(inputBuffer.data()[BASE_HEADER_SIZE]))[0];
+
+                    qint32 calculatedCRC = CalculateChecksum(outputBuffer, outputOffset, dataLength);
+
+                    cerr << "CRC of the data block: Header: " << claimedCRC << " Actual: " << calculatedCRC << endl;
+                }
+
+                qint32 lengthClaimed = reinterpret_cast<const qint32*>(&(inputBuffer.data()[inputFileLength - 4]))[0];
+
+                cerr << lengthClaimed << endl;
+
+                result = true;
+            }
         }
-
-
-
     }
 
     return result;
 }
 
-bool Torchlight2StashConverter::ScrambleFile(QString inputFilePath, QString outputFilePath)
+
+bool Torchlight2StashConverter::ScrambleFile(const QByteArray& inputBuffer, QByteArray& outputBuffer)
 {
     bool result = false;
 
-    QFile inputFile(inputFilePath);
-    QFile outputFile(outputFilePath);
+    qint64 inputFileLength = inputBuffer.size();
 
-    if (inputFile.open(QIODevice::ReadOnly) && outputFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+
+    if (inputFileLength > BASE_HEADER_SIZE)
     {
-        qint64 inputFileLength = inputFile.size();
-
-        QByteArray inputBuffer = inputFile.readAll();
-        inputFile.close();
-
-        if (inputFileLength > BASE_HEADER_SIZE)
+        // offset 4 is almost always 0x01, except on corrupted character and stash files
+        if ((quint8)inputBuffer[4] == 0x01)
         {
-            // offset 4 is almost always 0x01, except on corrupted character and stash files
-            if ((quint8)inputBuffer[4] == 0x01)
+            quint32 version = reinterpret_cast<const quint32*>(inputBuffer.data())[0];
+
+            bool isKnownSaveFileVersion = true;
+
+            switch (version)
             {
-                quint32 version = reinterpret_cast<quint32*>(inputBuffer.data())[0];
-
-//                bool isScrambled = true;
-                bool isKnownSaveFileVersion = true;
-
-                switch (version)
+                case 0x38:
+                case 0x40:
+                case 0x41:
                 {
-                    case 0x38:
-                    case 0x40:
-                    case 0x41:
-                    {
-                        version = 0x41;
-                        break;
-                    }
-
-                    case 0x42:
-                    {
-                        break;
-                    }
-
-                    default:
-                    {
-                        isKnownSaveFileVersion = false;
-                        break;
-                    }
+                    version = 0x41;
+                    break;
                 }
 
-                if (isKnownSaveFileVersion)
+                case 0x42:
                 {
-                    qint32 outputFileLength = inputFileLength + CRC_SIZE + FOOTER_SIZE;
-                    quint32 inputOffset = BASE_HEADER_SIZE;
-                    quint32 outputOffset = BASE_HEADER_SIZE + CRC_SIZE;
-                    quint32 dataLength = inputFileLength - BASE_HEADER_SIZE;
-
-                    QByteArray outputBuffer(outputFileLength, 0);
-
-                    for (int i = 0; i < 4; ++i)
-                    {
-                        outputBuffer[i] = inputBuffer[i];
-                    }
-
-                    outputBuffer[4] = 0x01;
-
-                    quint32 crc = CalculateChecksum(inputBuffer, inputOffset, dataLength);
-
-                    reinterpret_cast<quint32*>(&outputBuffer.data()[BASE_HEADER_SIZE])[0] = crc;
-
-                    Scramble(inputBuffer, inputOffset, dataLength, outputBuffer, outputOffset);
-
-                    reinterpret_cast<quint32*>(&(outputBuffer.data()[outputFileLength - 4]))[0] = outputFileLength;
-
-                    outputFile.write(outputBuffer);
-                    outputFile.close();
-
-                    result = true;
+                    break;
                 }
+
+                default:
+                {
+                    isKnownSaveFileVersion = false;
+                    break;
+                }
+            }
+
+            if (isKnownSaveFileVersion)
+            {
+                qint32 outputFileLength = inputFileLength + CRC_SIZE + FOOTER_SIZE;
+                quint32 inputOffset = BASE_HEADER_SIZE;
+                quint32 outputOffset = BASE_HEADER_SIZE + CRC_SIZE;
+                quint32 dataLength = inputFileLength - BASE_HEADER_SIZE;
+
+                outputBuffer.clear();
+                outputBuffer.fill(0, outputFileLength);
+
+                for (int i = 0; i < 4; ++i)
+                {
+                    outputBuffer[i] = inputBuffer[i];
+                }
+
+                outputBuffer[4] = 0x01;
+
+                quint32 crc = CalculateChecksum(inputBuffer, inputOffset, dataLength);
+
+                reinterpret_cast<quint32*>(&outputBuffer.data()[BASE_HEADER_SIZE])[0] = crc;
+
+                Scramble(inputBuffer, inputOffset, dataLength, outputBuffer, outputOffset);
+
+                reinterpret_cast<quint32*>(&(outputBuffer.data()[outputFileLength - 4]))[0] = outputFileLength;
+
+
+                result = true;
             }
         }
     }
-
 
     return result;
 }
