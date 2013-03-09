@@ -2,7 +2,7 @@
 #define TOOLS_H
 
 template<typename T>
-T convert<T>(void* data)
+T convert(void* data)
 {
     return *reinterpret_cast<T*>(data);
 }
