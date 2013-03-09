@@ -13,7 +13,7 @@ Torchlight2StashConverter::Torchlight2StashConverter(QObject* parent)
 /*
 *   Torchlight 2 sharedstash v65 checksum calculator proof-of-concept by Shatter
 */
-static unsigned int CalculateChecksum(const QByteArray& buffer, qint64 offset, qint64 length)
+static quint32 CalculateChecksum(const QByteArray& buffer, qint64 offset, qint64 length)
 {
     quint32 checksum = 0x14d3; // 14d3 seed
 
@@ -45,12 +45,12 @@ static void Descramble(const QByteArray& inputBuffer, qint64 inputOffset, qint64
     }
 }
 
-static void Scramble(const QByteArray& inputBuffer, qint64 inputOffset, qint64 length, QByteArray& outputBuffer, qint64 outputOffset)
+static void Scramble(const QByteArray& inputBuffer, qint32 inputOffset, qint32 length, QByteArray& outputBuffer, qint32 outputOffset)
 {
-    for (qint64 i = 0; i < length; ++i)
+    for (qint32 i = 0; i < length; ++i)
     {
-        quint8 mostSignificantNybble = inputBuffer.constData()[inputOffset + i] & 0x0F;
-        quint8 leastSignificantNybble = (inputBuffer.constData()[inputOffset + i] & 0xF0) >> 4;
+        quint8 leastSignificantNybble = inputBuffer.constData()[inputOffset + i] & 0x0F;
+        quint8 mostSignificantNybble = (inputBuffer.constData()[inputOffset + i] & 0xF0) >> 4;
 
         if (!((mostSignificantNybble == 0 && leastSignificantNybble == 0) ||
               (mostSignificantNybble == 0xF && leastSignificantNybble == 0xF)))
@@ -59,9 +59,9 @@ static void Scramble(const QByteArray& inputBuffer, qint64 inputOffset, qint64 l
             mostSignificantNybble ^= 0xF;
         }
 
-        outputBuffer.data()[outputOffset + i] = (outputBuffer.data()[outputOffset + i] & 0x0F) | (mostSignificantNybble << 4);
+        outputBuffer.data()[outputOffset + i] = (outputBuffer.data()[outputOffset + i] & 0x0F) | (leastSignificantNybble << 4);
 
-//        outputBuffer.data()[outputBuffer + (length - 1) - i] = (qint8)((outputBuffer.data()[outputOffset + (length - 1) - i] & 0xF0) | leastSignificantNybble);
+        outputBuffer.data()[outputOffset + (length - 1) - i] = ((outputBuffer.data()[outputOffset + (length - 1) - i] & 0xF0) | mostSignificantNybble);
 
     }
 }
@@ -85,9 +85,9 @@ bool Torchlight2StashConverter::DescrambleFile(QString inputFilePath, QString ou
             // offset 4 is almost always 0x01, except on corrupted character and stash files
             if ((quint8)inputBuffer[4] == 0x01)
             {
-                quint32 version = reinterpret_cast<quint32>((char*)inputBuffer.data()[0]);
+                quint32 version = reinterpret_cast<quint32*>(inputBuffer.data())[0];
 
-                bool isScrambled = true;
+//                bool isScrambled = true;
                 bool isKnownSaveFileVersion = true;
 
                 qint64 inputOffset = 0;
@@ -102,7 +102,7 @@ bool Torchlight2StashConverter::DescrambleFile(QString inputFilePath, QString ou
                         // filesize of output will be the size of input minus four
                         outputFileLength = inputFileLength - FOOTER_SIZE;
                         inputOffset = BASE_HEADER_SIZE;
-                        isScrambled = false;
+//                        isScrambled = false;
                         break;
                     }
                     case 0x40:
@@ -160,12 +160,14 @@ bool Torchlight2StashConverter::DescrambleFile(QString inputFilePath, QString ou
                     {
                         qint32 claimedCRC = reinterpret_cast<qint32*>(&(inputBuffer.data()[BASE_HEADER_SIZE]))[0];
 
-                        qint32 calculatedCRC = CalculateChecksum(inputBuffer, inputOffset, dataLength);
+                        qint32 calculatedCRC = CalculateChecksum(outputBuffer, outputOffset, dataLength);
 
                         cerr << "CRC of the data block: Header: " << claimedCRC << " Actual: " << calculatedCRC << endl;
                     }
 
-                    qint32 lengthClaimed = reinterpret_cast<qint32>((char*)inputBuffer.data()[inputFileLength - 4]);
+                    qint32 lengthClaimed = reinterpret_cast<qint32*>(&(inputBuffer.data()[inputFileLength - 4]))[0];
+
+                    cerr << lengthClaimed << endl;
 
                     outputFile.write(outputBuffer);
                     outputFile.close();
@@ -193,7 +195,74 @@ bool Torchlight2StashConverter::ScrambleFile(QString inputFilePath, QString outp
 
     if (inputFile.open(QIODevice::ReadOnly) && outputFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
+        qint64 inputFileLength = inputFile.size();
 
+        QByteArray inputBuffer = inputFile.readAll();
+        inputFile.close();
+
+        if (inputFileLength > BASE_HEADER_SIZE)
+        {
+            // offset 4 is almost always 0x01, except on corrupted character and stash files
+            if ((quint8)inputBuffer[4] == 0x01)
+            {
+                quint32 version = reinterpret_cast<quint32*>(inputBuffer.data())[0];
+
+//                bool isScrambled = true;
+                bool isKnownSaveFileVersion = true;
+
+                switch (version)
+                {
+                    case 0x38:
+                    case 0x40:
+                    case 0x41:
+                    {
+                        version = 0x41;
+                        break;
+                    }
+
+                    case 0x42:
+                    {
+                        break;
+                    }
+
+                    default:
+                    {
+                        isKnownSaveFileVersion = false;
+                        break;
+                    }
+                }
+
+                if (isKnownSaveFileVersion)
+                {
+                    qint32 outputFileLength = inputFileLength + CRC_SIZE + FOOTER_SIZE;
+                    quint32 inputOffset = BASE_HEADER_SIZE;
+                    quint32 outputOffset = BASE_HEADER_SIZE + CRC_SIZE;
+                    quint32 dataLength = inputFileLength - BASE_HEADER_SIZE;
+
+                    QByteArray outputBuffer(outputFileLength, 0);
+
+                    for (int i = 0; i < 4; ++i)
+                    {
+                        outputBuffer[i] = inputBuffer[i];
+                    }
+
+                    outputBuffer[4] = 0x01;
+
+                    quint32 crc = CalculateChecksum(inputBuffer, inputOffset, dataLength);
+
+                    reinterpret_cast<quint32*>(&outputBuffer.data()[BASE_HEADER_SIZE])[0] = crc;
+
+                    Scramble(inputBuffer, inputOffset, dataLength, outputBuffer, outputOffset);
+
+                    reinterpret_cast<quint32*>(&(outputBuffer.data()[outputFileLength - 4]))[0] = outputFileLength;
+
+                    outputFile.write(outputBuffer);
+                    outputFile.close();
+
+                    result = true;
+                }
+            }
+        }
     }
 
 

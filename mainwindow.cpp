@@ -183,8 +183,18 @@ void MainWindow::OnTestFileDescramblerClicked()
     QString torchlight2Folder = mOptions[OptionKeys::Torchlight2SharedStashFile];
     QString stashesFolder = mOptions[OptionKeys::StashManagerFolder];
 
-    if (stashesFolder.length() > 0)
-        stashesFolder += "/tempStash.bin";
+    QString decryptedFilePath;
+    QString reencryptedFilePath;
 
-    Torchlight2StashConverter::DescrambleFile(torchlight2Folder, stashesFolder);
+    if (stashesFolder.length() > 0)
+    {
+        decryptedFilePath = stashesFolder + "/decryptedStash.bin";
+
+        reencryptedFilePath = stashesFolder + "/re-encryptedStash.bin";
+    }
+
+    Torchlight2StashConverter::DescrambleFile(torchlight2Folder, decryptedFilePath);
+    Torchlight2StashConverter::ScrambleFile(decryptedFilePath, reencryptedFilePath);
+
+
 }
