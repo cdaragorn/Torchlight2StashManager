@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>496</width>
+    <height>390</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Arial</family>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Torchlight 2 Shared Stash Manager</string>
+  </property>
+  <property name="toolTip">
+   <string/>
+  </property>
+  <property name="whatsThis">
+   <string/>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="MainTabControlWidget">
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="MainTab">
+       <attribute name="title">
+        <string>Main</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="0,10,0,10,0" columnminimumwidth="0,150,50,100,0">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <item row="2" column="2">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="MainTabStashesLabel">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="text">
+           <string>Stashes</string>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="GroupsComboBox">
+          <property name="insertPolicy">
+           <enum>QComboBox::InsertAlphabetically</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="SharedStashListWidget" name="SelectListWidget">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropOverwriteMode">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragDrop</enum>
+          </property>
+          <property name="defaultDropAction">
+           <enum>Qt::MoveAction</enum>
+          </property>
+          <property name="selectionRectVisible">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="MainTabGroupsLabel">
+          <property name="text">
+           <string>Groups</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLineEdit" name="MainTabAddItemLineEdit"/>
+        </item>
+        <item row="1" column="4">
+         <widget class="QPushButton" name="MainTabAddItemButton">
+          <property name="text">
+           <string>Add Item</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3" colspan="2">
+         <widget class="QListWidget" name="MainTabListStashItemsListWidget"/>
+        </item>
+        <item row="0" column="3" colspan="2">
+         <widget class="QLabel" name="MainTabStashContentsLabel">
+          <property name="text">
+           <string>Stash Contents</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="ManageGroupsTab">
+       <attribute name="title">
+        <string>Manage Groups</string>
+       </attribute>
+       <widget class="QPushButton" name="AddGroupButton">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>70</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add Group</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="SettingsTab">
+       <attribute name="title">
+        <string>Settings</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="SettingsTabTorchlight2FolderLabel">
+          <property name="text">
+           <string>Torchlight 2 Folder</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="SettingsTabTorchlight2FolderButton">
+          <property name="text">
+           <string>Set Folder</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="SettingsTabTorchlight2FolderLineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="SettingsTabStashesFolderButton">
+          <property name="text">
+           <string>Set Folder</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="SettingsTabStashesFolderLineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="SettingsTabStashesFolderLabel">
+          <property name="text">
+           <string>Folder To Store Stashes In</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="3">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="SettingsTabTestFileDescramblerButton">
+          <property name="text">
+           <string>Test File Descrambler</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>496</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionCreateNewStash"/>
+    <addaction name="actionAdd_Existing_Stash"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="MainToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionCreateNewStash"/>
+   <addaction name="actionAdd_Existing_Stash"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionCreateNewStash">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/solid_iron_chest.png</normaloff>:/images/solid_iron_chest.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create New Stash</string>
+   </property>
+   <property name="toolTip">
+    <string>Create New Stash</string>
+   </property>
+   <property name="whatsThis">
+    <string>Creates a new stored stash by making a copy of your current shared stash</string>
+   </property>
+  </action>
+  <action name="actionAdd_Existing_Stash">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/Open-Folder.png</normaloff>:/images/Open-Folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Existing Stash</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Existing Stash</string>
+   </property>
+   <property name="whatsThis">
+    <string>Choose a stash file that has already been saved to add to the stashes being managed</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>SharedStashListWidget</class>
+   <extends>QListWidget</extends>
+   <header>sharedstashlistwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
+ <connections/>
+</ui>

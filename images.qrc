@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/solid_iron_chest.png</file>
+        <file>images/Open-Folder.png</file>
+    </qresource>
+</RCC>
