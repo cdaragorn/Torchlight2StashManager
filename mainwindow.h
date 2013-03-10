@@ -29,15 +29,13 @@ private:
     OptionCollection mOptions;
     GroupsTable mGroupsTable;
 
-    void FillGroupsComboBox();
-    void LoadUIOptions();
+//    void FillGroupsComboBox();
+    void LoadOptions();
 
 private slots:
     void OnBoogeyClicked();
     void OnCreateNewStashClicked();
     void OnAddGroup();
-    void OnSetTorchlight2FolderClicked();
-    void OnSetStashesFolderClicked();
     void OnOptionsChanged();
     void OnTestFileDescramblerClicked();
 

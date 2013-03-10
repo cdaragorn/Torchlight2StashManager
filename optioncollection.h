@@ -12,7 +12,7 @@ class OptionCollection : public QObject
 public:
     explicit OptionCollection(QObject* parent = 0);
 
-    const QString operator [](QString key) const { return mOptions[key]; }
+//    const QString operator [](QString key) const { return mOptions[key]; }
 //    QString& operator [](QString key)
 //    {
 //        return mOptions[key];
@@ -24,6 +24,7 @@ public:
 
 //public slots:
     void Set(QString key, QString value);
+    QString Get(QString key) { return mOptions[key]; }
 
 signals:
     void OptionsChanged(QString key, QString value);

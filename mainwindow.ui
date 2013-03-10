@@ -37,14 +37,53 @@
       <property name="movable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="MainTab">
+      <widget class="MainTabPage" name="MainTab">
        <attribute name="title">
         <string>Main</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="0,10,0,10,0" columnminimumwidth="0,150,50,100,0">
+       <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="20,6,0,0,20" columnminimumwidth="0,0,50,0,0">
         <property name="spacing">
          <number>6</number>
         </property>
+        <item row="0" column="3" colspan="2">
+         <widget class="QLabel" name="MainTabStashContentsLabel">
+          <property name="text">
+           <string>Infinite Stash Items</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3" colspan="2">
+         <widget class="InfiniteStashItemsListWidget" name="MainTabInfiniteStashItemsListWidget">
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragDrop</enum>
+          </property>
+          <property name="defaultDropAction">
+           <enum>Qt::MoveAction</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="MainTabSharedStashItemsLabel">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="text">
+           <string>Torchlight 2 Shared Stash Items</string>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="2">
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -58,31 +97,22 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="MainTabStashesLabel">
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="text">
-           <string>Stashes</string>
-          </property>
-          <property name="scaledContents">
-           <bool>false</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="GroupsComboBox">
+        <item row="1" column="4">
+         <widget class="QComboBox" name="MainTabGroupsComboBox">
           <property name="insertPolicy">
            <enum>QComboBox::InsertAlphabetically</enum>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="SharedStashListWidget" name="SelectListWidget">
+        <item row="1" column="3">
+         <widget class="QLabel" name="MainTabGroupsLabel">
+          <property name="text">
+           <string>Groups</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" rowspan="2" colspan="2">
+         <widget class="SharedStashListWidget" name="MainTabSharedStashItemsListWidget">
           <property name="acceptDrops">
            <bool>true</bool>
           </property>
@@ -106,46 +136,6 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="MainTabGroupsLabel">
-          <property name="text">
-           <string>Groups</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QLineEdit" name="MainTabAddItemLineEdit"/>
-        </item>
-        <item row="1" column="4">
-         <widget class="QPushButton" name="MainTabAddItemButton">
-          <property name="text">
-           <string>Add Item</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3" colspan="2">
-         <widget class="QListWidget" name="MainTabListStashItemsListWidget">
-          <property name="dragEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="dragDropMode">
-           <enum>QAbstractItemView::DragDrop</enum>
-          </property>
-          <property name="defaultDropAction">
-           <enum>Qt::MoveAction</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3" colspan="2">
-         <widget class="QLabel" name="MainTabStashContentsLabel">
-          <property name="text">
-           <string>Stash Contents</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="ManageGroupsTab">
@@ -166,7 +156,7 @@
         </property>
        </widget>
       </widget>
-      <widget class="QWidget" name="SettingsTab">
+      <widget class="SettingsTabPage" name="SettingsTab">
        <attribute name="title">
         <string>Settings</string>
        </attribute>
@@ -309,6 +299,23 @@
    <class>SharedStashListWidget</class>
    <extends>QListWidget</extends>
    <header>sharedstashlistwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MainTabPage</class>
+   <extends>QWidget</extends>
+   <header>maintabpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SettingsTabPage</class>
+   <extends>QWidget</extends>
+   <header>settingstabpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>InfiniteStashItemsListWidget</class>
+   <extends>QListWidget</extends>
+   <header>infinitestashitemslistwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

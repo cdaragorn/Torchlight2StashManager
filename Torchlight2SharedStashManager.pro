@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     settingstabpage.cpp \
     torchlight2stashconverter.cpp \
     optionkeys.cpp \
-    torchlight2stash.cpp
+    torchlight2stash.cpp \
+    maintabpage.cpp \
+    infinitestashitemslistwidget.cpp
 
 HEADERS  += mainwindow.h \
     sharedstashlistwidget.h \
@@ -38,7 +40,9 @@ HEADERS  += mainwindow.h \
     torchlight2stashconverter.h \
     optionkeys.h \
     torchlight2stash.h \
-    tools.h
+    tools.h \
+    maintabpage.h \
+    infinitestashitemslistwidget.h
 
 FORMS    += mainwindow.ui
 
