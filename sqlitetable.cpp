@@ -25,6 +25,11 @@ QSqlDatabase SqliteTable::GetDatabase()
     return db;
 }
 
+SqliteTable::~SqliteTable()
+{
+
+}
+
 void SqliteTable::PrintSqlError(QSqlError error)
 {
     QMessageBox::information(NULL, "Sql Error", error.text(), QMessageBox::Ok);

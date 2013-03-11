@@ -4,7 +4,7 @@
 using namespace std;
 
 SharedStashListWidget::SharedStashListWidget(QWidget *parent) :
-    QListWidget(parent)
+    CustomListWidget(parent)
 {
     mContextMenu = new QMenu(this);
     QAction* action = new QAction("hello", mContextMenu);
@@ -59,3 +59,4 @@ void SharedStashListWidget::dropEvent(QDropEvent *event)
 //        event->acceptProposedAction();
 //    }
 }
+

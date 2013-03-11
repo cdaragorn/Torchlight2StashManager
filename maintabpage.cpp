@@ -7,6 +7,7 @@ MainTabPage::MainTabPage(QWidget *parent) :
     mTorchlight2SharedStashItemsListWidget = NULL;
     mInfiniteStashItemsListWidget = NULL;
     mGroupsComboBox = NULL;
+    mNumberOfItemsInSharedStashLabel = NULL;
     mGroupsTable = NULL;
 }
 
@@ -31,5 +32,24 @@ void MainTabPage::FillGroupsComboBox()
                 mGroupsComboBox->addItem(it.value(), it.key());
             }
         }
+    }
+}
+
+void MainTabPage::OnTorchlight2SharedStashItemAdded(QListWidgetItem* item)
+{
+    if (mNumberOfItemsInSharedStashLabel != NULL && mTorchlight2SharedStashItemsListWidget != NULL)
+    {
+        qint32 count = mTorchlight2SharedStashItemsListWidget->count();
+        mNumberOfItemsInSharedStashLabel->setText(QString::number(count));
+    }
+}
+
+void MainTabPage::OnTorchlight2SharedStashItemsRemoved(QList<QListWidgetItem*> items)
+{
+    if (mNumberOfItemsInSharedStashLabel != NULL && mTorchlight2SharedStashItemsListWidget != NULL)
+    {
+        qint32 count = mTorchlight2SharedStashItemsListWidget->count() - items.count();
+
+        mNumberOfItemsInSharedStashLabel->setText(QString::number(count));
     }
 }

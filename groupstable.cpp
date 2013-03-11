@@ -54,7 +54,6 @@ qint64 GroupsTable::AddGroup(QString newGroupName)
         {
             PrintSqlError(query.lastError());
         }
-
         db.close();
     }
     return result;

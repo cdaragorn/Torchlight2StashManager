@@ -9,12 +9,14 @@
 #include <QSqlField>
 #include <QSqlQuery>
 #include <QMessageBox>
+#include <QHash>
 
 class SqliteTable : public QObject
 {
     Q_OBJECT
 public:
     explicit SqliteTable(QString databaseName, QObject *parent = 0);
+    ~SqliteTable();
     
 signals:
     

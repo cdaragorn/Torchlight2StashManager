@@ -44,13 +44,19 @@ void Torchlight2Stash::ReadItemsInStash()
 
         qint64 nameStartPos = 15;
         QString itemName;
+        QVector<quint16> rawItemName;
 
         for (qint64 i = 15; i < (nameStartPos + (itemNameLength * 2)); i += 2)
         {
 //            quint16 character = convert<quint16>(&mStash.data()[i]);
-            QChar character = convert<QChar>(&itemArray->data()[i]);
-            itemName += character;
+//            QChar character = convert<QChar>(&itemArray->data()[i]);
+            quint16 wcharacter = convert<quint16>(&itemArray->data()[i]);
+            rawItemName.append(wcharacter);
+//            QString unicodeResult = QString::fromUtf16(&wcharacter, 1);
+//            itemName += unicodeResult;
         }
+
+        itemName = QString::fromUtf16(&rawItemName[0], rawItemName.size());
 
         if (itemName.length() > 0 && !mItemsInStash.contains(itemName))
             mItemsInStash[itemName] = itemArray;

@@ -7,9 +7,11 @@
 #include <QMouseEvent>
 #include <QAction>
 #include <QMessageBox>
+#include <QList>
 #include <sstream>
+#include <customlistwidget.h>
 
-class SharedStashListWidget : public QListWidget
+class SharedStashListWidget : public CustomListWidget
 {
     Q_OBJECT
 public:
@@ -25,6 +27,7 @@ private:
     QMenu* mContextMenu;
     
 signals:
+
     
 public slots:
 

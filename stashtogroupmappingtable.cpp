@@ -34,8 +34,6 @@ void StashToGroupMappingTable::AddStashToGroup(qint64 inStashId, qint64 inGroupI
         {
             PrintSqlError(query.lastError());
         }
-
-
         db.close();
     }
 }
@@ -54,8 +52,6 @@ void StashToGroupMappingTable::RemoveStashFromGroup(qint64 inStashId, qint64 inG
         {
             PrintSqlError(query.lastError());
         }
-
-
         db.close();
     }
 }
@@ -91,8 +87,6 @@ QList<qint64> StashToGroupMappingTable::GetAllStashesInGroup(qint64 inGroupId)
         {
             PrintSqlError(query.lastError());
         }
-
-
         db.close();
     }
 
@@ -129,8 +123,6 @@ QList<qint64> StashToGroupMappingTable::GetAllGroupsStashIsIn(qint64 inStashId)
         {
             PrintSqlError(query.lastError());
         }
-
-
         db.close();
     }
 

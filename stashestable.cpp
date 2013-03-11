@@ -13,7 +13,6 @@ StashesTable::StashesTable(QString inDatabaseName, QObject *parent) :
         {
             PrintSqlError(query.lastError());
         }
-
         db.close();
     }
 }

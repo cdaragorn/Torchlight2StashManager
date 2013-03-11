@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->MainTab->SetTorchlight2SharedStashItemsListWidget(ui->MainTabSharedStashItemsListWidget);
     ui->MainTab->SetInfiniteStashItemsListWidget(ui->MainTabInfiniteStashItemsListWidget);
     ui->MainTab->SetGroupsTable(&mGroupsTable);
+    ui->MainTab->SetNumberOfItemsInSharedStashLabel(ui->MainTabNumberOfItemsInSharedStashLabel);
     ui->MainTab->SetGroupsComboBox(ui->MainTabGroupsComboBox);
 
 //    ui->MainTabControlWidget->move(0, 0);
