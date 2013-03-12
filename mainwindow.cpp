@@ -10,6 +10,7 @@
 #include <torchlight2stashconverter.h>
 #include <optionkeys.h>
 #include <torchlight2stash.h>
+#include <torchlight2item.h>
 
 #include <iostream>
 using namespace std;
@@ -30,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->MainTab->SetGroupsTable(&mGroupsTable);
     ui->MainTab->SetNumberOfItemsInSharedStashLabel(ui->MainTabNumberOfItemsInSharedStashLabel);
     ui->MainTab->SetGroupsComboBox(ui->MainTabGroupsComboBox);
+    ui->MainTab->SetSettingsTabPage(ui->SettingsTab);
 
 //    ui->MainTabControlWidget->move(0, 0);
 //    QLayout* layout = ui->MainTab->layout();
@@ -46,8 +48,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->AddGroupButton, SIGNAL(pressed()), this, SLOT(OnAddGroup()));
 
     connect(&mOptions, SIGNAL(OptionsChanged(QString, QString)), this, SLOT(OnOptionsChanged()));
-
-    connect(ui->SettingsTabTestFileDescramblerButton, SIGNAL(clicked()), this, SLOT(OnTestFileDescramblerClicked()));
 
 //    FillGroupsComboBox();
 
@@ -147,62 +147,3 @@ void MainWindow::OnOptionsChanged()
     }
 }
 
-void MainWindow::OnTestFileDescramblerClicked()
-{
-    QString torchlight2StashFile = mOptions.Get(OptionKeys::Torchlight2SharedStashFile);
-    QString stashesFolder = mOptions.Get(OptionKeys::StashManagerFolder);
-
-    QString decryptedFilePath;
-//    QString reencryptedFilePath;
-
-    if (stashesFolder.length() > 0)
-    {
-        decryptedFilePath = stashesFolder + "/decryptedStash.bin";
-
-//        reencryptedFilePath = stashesFolder + "/re-encryptedStash.bin";
-    }
-
-    QByteArray decryptedBytes;
-
-    QFile stashFile(torchlight2StashFile);
-
-    if (stashFile.open(QIODevice::ReadOnly))
-    {
-        Torchlight2StashConverter::DescrambleFile(stashFile.readAll(), decryptedBytes);
-        stashFile.close();
-
-//        QFile decryptedFile(decryptedFilePath);
-
-//        if (decryptedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-//        {
-//            decryptedFile.write(decryptedBytes);
-//            decryptedFile.close();
-//        }
-
-//        QFile reencryptedFile(reencryptedFilePath);
-
-//        if (reencryptedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-//        {
-//            QByteArray outputBuffer;
-//            Torchlight2StashConverter::ScrambleFile(decryptedBytes, outputBuffer);
-
-//            reencryptedFile.write(outputBuffer);
-//            reencryptedFile.close();
-//        }
-
-        Torchlight2Stash stash(decryptedBytes);
-
-        QHash<QString, QByteArray*> itemsInStash = stash.StashItems();
-        QList<QString> keys = itemsInStash.keys();
-
-        for (int i = 0; i < keys.count(); ++i)
-        {
-            QListWidgetItem* item = new QListWidgetItem(keys[i]);
-            QVariant itemData(*itemsInStash[keys[i]]);
-            item->setData(Qt::UserRole, itemData);
-            ui->MainTabSharedStashItemsListWidget->addItem(item);
-        }
-    }
-
-
-}

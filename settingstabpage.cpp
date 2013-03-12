@@ -12,20 +12,31 @@ SettingsTabPage::SettingsTabPage(QWidget *parent) :
     mInfiniteStashFolderLineEdit = NULL;
 }
 
-void SettingsTabPage::OnSetTorchlight2FolderClicked()
+void SettingsTabPage::OnSetTorchlight2SharedStashFileClicked()
 {
-    QString folder = QFileDialog::getOpenFileName(this, "Choose Torchlight 2 Shared Stash File");
+    QString currentSharedStashFile = mOptions->Get(OptionKeys::Torchlight2SharedStashFile);
+    QString file;
 
-    if (!folder.isNull() && !folder.isEmpty())
+    if (currentSharedStashFile.length() > 0)
     {
-        mTorchlight2SharedStashFileLineEdit->setText(folder);
-        mTorchlight2SharedStashFileLineEdit->setToolTip(folder);
-        mOptions->Set(OptionKeys::Torchlight2SharedStashFile, folder);
+        file = QFileDialog::getOpenFileName(this, "Choose Torchlight 2 Shared Stash File", currentSharedStashFile);
+    }
+    else
+    {
+        file = QFileDialog::getOpenFileName(this, "Choose Torchlight 2 Shared Stash File");
+    }
+
+    if (!file.isNull() && !file.isEmpty())
+    {
+        mTorchlight2SharedStashFileLineEdit->setText(file);
+        mTorchlight2SharedStashFileLineEdit->setToolTip(file);
+        mOptions->Set(OptionKeys::Torchlight2SharedStashFile, file);
+        torchlight2SharedStashFileChanged(file);
     }
 }
 
 
-void SettingsTabPage::OnSetStashesFolderClicked()
+void SettingsTabPage::OnSetInfiniteStashFolderClicked()
 {
     QString folder = QFileDialog::getExistingDirectory(this, "Choose folder");
 
@@ -34,5 +45,6 @@ void SettingsTabPage::OnSetStashesFolderClicked()
         mInfiniteStashFolderLineEdit->setText(folder);
         mInfiniteStashFolderLineEdit->setToolTip(folder);
         mOptions->Set(OptionKeys::StashManagerFolder, folder);
+        infiniteStashFolderChanged(folder);
     }
 }

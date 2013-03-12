@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <torchlight2item.h>
 
 class Torchlight2Stash : public QObject
 {
@@ -10,7 +11,7 @@ class Torchlight2Stash : public QObject
 public:
     explicit Torchlight2Stash(QByteArray& sharedStash, QObject *parent = 0);
     
-    QHash<QString, QByteArray*> StashItems() { return mItemsInStash; }
+    QList<Torchlight2Item> StashItems() { return mItemsInStash; }
 signals:
     
 public slots:
@@ -18,7 +19,7 @@ public slots:
 private:
     QByteArray mStash;
 
-    QHash<QString, QByteArray*> mItemsInStash;
+    QList<Torchlight2Item> mItemsInStash;
 
     void ReadItemsInStash();
     

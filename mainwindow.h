@@ -37,7 +37,6 @@ private slots:
     void OnCreateNewStashClicked();
     void OnAddGroup();
     void OnOptionsChanged();
-    void OnTestFileDescramblerClicked();
 
 };
 

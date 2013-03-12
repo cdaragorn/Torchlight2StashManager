@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     maintabpage.cpp \
     infinitestashitemslistwidget.cpp \
     managegroupstabpage.cpp \
-    customlistwidget.cpp
+    customlistwidget.cpp \
+    torchlight2item.cpp
 
 HEADERS  += mainwindow.h \
     sharedstashlistwidget.h \
@@ -46,7 +47,8 @@ HEADERS  += mainwindow.h \
     maintabpage.h \
     infinitestashitemslistwidget.h \
     managegroupstabpage.h \
-    customlistwidget.h
+    customlistwidget.h \
+    torchlight2item.h
 
 FORMS    += mainwindow.ui
 

@@ -19,7 +19,7 @@ public:
 
         if (mSetTorchlight2SharedStashFileButton != NULL)
             connect(mSetTorchlight2SharedStashFileButton, SIGNAL(pressed()), this,
-                    SLOT(OnSetTorchlight2FolderClicked()));
+                    SLOT(OnSetTorchlight2SharedStashFileClicked()));
 
     }
 
@@ -33,7 +33,7 @@ public:
         mSetInfiniteStashFolderButton = inButton;
 
         if (mSetInfiniteStashFolderButton != NULL)
-            connect(mSetInfiniteStashFolderButton, SIGNAL(pressed()), this, SLOT(OnSetStashesFolderClicked()));
+            connect(mSetInfiniteStashFolderButton, SIGNAL(pressed()), this, SLOT(OnSetInfiniteStashFolderClicked()));
     }
 
     void SetInfiniteStashFolderLineEdit(QLineEdit* inLineEdit)
@@ -58,12 +58,14 @@ public:
 
     
 signals:
+    void torchlight2SharedStashFileChanged(QString fileLocation);
+    void infiniteStashFolderChanged(QString folderLocation);
     
 public slots:
 
 private slots:
-    void OnSetTorchlight2FolderClicked();
-    void OnSetStashesFolderClicked();
+    void OnSetTorchlight2SharedStashFileClicked();
+    void OnSetInfiniteStashFolderClicked();
 
 private:
     OptionCollection* mOptions;
