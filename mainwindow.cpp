@@ -24,18 +24,18 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
+    ui->MainTabPage->SetSettingsTabPage(ui->SettingsTab);
 
     ui->SettingsTab->SetTorchlight2SharedStashFileButton(ui->SettingsTabTorchlight2FolderButton);
     ui->SettingsTab->SetTorchlight2SharedStashFileLineEdit(ui->SettingsTabTorchlight2FolderLineEdit);
     ui->SettingsTab->SetInfiniteStashFolderButton(ui->SettingsTabStashesFolderButton);
     ui->SettingsTab->SetInfiniteStashFolderLineEdit(ui->SettingsTabStashesFolderLineEdit);
 
-    ui->MainTab->SetTorchlight2SharedStashItemsListWidget(ui->MainTabSharedStashItemsListWidget);
-    ui->MainTab->SetGroupsTable(&mGroupsTable);
-    ui->MainTab->SetNumberOfItemsInSharedStashLabel(ui->MainTabNumberOfItemsInSharedStashLabel);
-    ui->MainTab->SetGroupsComboBox(ui->MainTabGroupsComboBox);
-    ui->MainTab->SetSettingsTabPage(ui->SettingsTab);
+//    ui->MainTab->SetTorchlight2SharedStashItemsListWidget(ui->MainTabSharedStashItemsListWidget);
+//    ui->MainTab->SetGroupsTable(&mGroupsTable);
+//    ui->MainTab->SetNumberOfItemsInSharedStashLabel(ui->MainTabNumberOfItemsInSharedStashLabel);
+//    ui->MainTab->SetGroupsComboBox(ui->MainTabGroupsComboBox);
+//    ui->MainTab->SetSettingsTabPage(ui->SettingsTab);
 
 
     InfiniteStashStandardItemModel* model = new InfiniteStashStandardItemModel();
@@ -64,10 +64,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    model->setVerticalHeaderLabels(labels);
 
-    ui->TestTreeView->setModel(model);
+//    ui->TestTreeView->setModel(model);
 
-    ui->MainTab->SetInfiniteStashTreeView(ui->TestTreeView);
-    ui->MainTab->SetInfiniteStashTreeViewModel(model);
+//    ui->MainTab->SetInfiniteStashTreeView(ui->TestTreeView);
+//    ui->MainTab->SetInfiniteStashTreeViewModel(model);
 
 
     ui->ManageGroupsTab->SetGroupsTable(&mGroupsTable);
@@ -128,7 +128,8 @@ void MainWindow::LoadOptions()
         mOptions.Load(doc.documentElement());
 
         ui->SettingsTab->Options(&mOptions);
-        ui->MainTab->Options(&mOptions);
+        ui->MainTabPage->Options(&mOptions);
+//        ui->MainTab->Options(&mOptions);
     }
 
 }
@@ -162,8 +163,8 @@ void MainWindow::OnAddGroup()
         {
             quint64 insertId = mGroupsTable.AddGroup(groupsDialog.GroupName());
 
-            if (insertId > 0)
-                ui->MainTabGroupsComboBox->addItem(groupsDialog.GroupName(), insertId);
+//            if (insertId > 0)
+//                ui->MainTabGroupsComboBox->addItem(groupsDialog.GroupName(), insertId);
         }
     }
 }

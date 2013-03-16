@@ -12,6 +12,27 @@ MainTabPageForm::MainTabPageForm(QWidget *parent) :
 
     mTorchlight2Stash = NULL;
 
+    mInfiniteStashTreeViewModel = new InfiniteStashStandardItemModel();
+    ui->InfiniteStashItemsTreeView->setModel(mInfiniteStashTreeViewModel);
+
+
+    QStandardItem* parentItem = new QStandardItem("root");
+    parentItem->setDragEnabled(false);
+    parentItem->setEditable(false);
+    QIcon icon("://images/Open-Folder.png");
+    parentItem->setIcon(icon);
+    mInfiniteStashTreeViewModel->appendRow(parentItem);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        QStandardItem* item = new QStandardItem(QString("item %0").arg(i));
+        item->setEditable(false);
+        item->setDragEnabled(false);
+        item->setIcon(icon);
+        parentItem->appendRow(item);
+        parentItem = item;
+    }
+
     mIsLoading = false;
 
     connect(ui->Torchlight2SharedStashListWidget,

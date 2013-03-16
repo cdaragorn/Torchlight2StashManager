@@ -55,7 +55,20 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="SharedStashListWidget" name="Torchlight2SharedStashListWidget"/>
+    <widget class="SharedStashListWidget" name="Torchlight2SharedStashListWidget">
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::DragDrop</enum>
+     </property>
+     <property name="defaultDropAction">
+      <enum>Qt::MoveAction</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+    </widget>
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="SharedStashTitleLabel">
@@ -68,7 +81,23 @@
     </widget>
    </item>
    <item row="2" column="3">
-    <widget class="InfiniteStashTreeView" name="InfiniteStashItemsTreeView"/>
+    <widget class="InfiniteStashTreeView" name="InfiniteStashItemsTreeView">
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::DragDrop</enum>
+     </property>
+     <property name="defaultDropAction">
+      <enum>Qt::MoveAction</enum>
+     </property>
+     <property name="indentation">
+      <number>10</number>
+     </property>
+     <property name="headerHidden">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

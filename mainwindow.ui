@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>496</width>
-    <height>390</height>
+    <width>481</width>
+    <height>353</height>
    </rect>
   </property>
   <property name="font">
@@ -37,138 +37,10 @@
       <property name="movable">
        <bool>true</bool>
       </property>
-      <widget class="MainTabPage" name="MainTab">
+      <widget class="MainTabPageForm" name="MainTabPage">
        <attribute name="title">
         <string>Main</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout" columnminimumwidth="0,0,50,0,0">
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="MainTabSharedStashItemsLabel">
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="text">
-           <string>Torchlight 2 Shared Stash Items</string>
-          </property>
-          <property name="scaledContents">
-           <bool>false</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3" colspan="2">
-         <widget class="QLabel" name="MainTabStashContentsLabel">
-          <property name="text">
-           <string>Infinite Stash Items</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Total Items in Stash:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="MainTabNumberOfItemsInSharedStashLabel">
-          <property name="styleSheet">
-           <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
-          </property>
-          <property name="text">
-           <string>0</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QLabel" name="MainTabGroupsLabel">
-          <property name="text">
-           <string>Groups</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="4">
-         <widget class="QComboBox" name="MainTabGroupsComboBox">
-          <property name="insertPolicy">
-           <enum>QComboBox::InsertAlphabetically</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="SharedStashListWidget" name="MainTabSharedStashItemsListWidget">
-          <property name="acceptDrops">
-           <bool>true</bool>
-          </property>
-          <property name="dragEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="dragDropOverwriteMode">
-           <bool>false</bool>
-          </property>
-          <property name="dragDropMode">
-           <enum>QAbstractItemView::DragDrop</enum>
-          </property>
-          <property name="defaultDropAction">
-           <enum>Qt::MoveAction</enum>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::ExtendedSelection</enum>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectItems</enum>
-          </property>
-          <property name="selectionRectVisible">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="3" colspan="2">
-         <widget class="InfiniteStashTreeView" name="TestTreeView">
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAsNeeded</enum>
-          </property>
-          <property name="dragEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="dragDropMode">
-           <enum>QAbstractItemView::DragDrop</enum>
-          </property>
-          <property name="defaultDropAction">
-           <enum>Qt::MoveAction</enum>
-          </property>
-          <property name="horizontalScrollMode">
-           <enum>QAbstractItemView::ScrollPerPixel</enum>
-          </property>
-          <property name="indentation">
-           <number>10</number>
-          </property>
-          <property name="uniformRowHeights">
-           <bool>true</bool>
-          </property>
-          <property name="headerHidden">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </widget>
       <widget class="ManageGroupsTabPage" name="ManageGroupsTab">
        <attribute name="title">
@@ -268,11 +140,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="MainTabPageForm" name="tab">
-       <attribute name="title">
-        <string>Page</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -282,7 +149,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>496</width>
+     <width>481</width>
      <height>21</height>
     </rect>
    </property>
@@ -344,17 +211,6 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>SharedStashListWidget</class>
-   <extends>QListWidget</extends>
-   <header>sharedstashlistwidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MainTabPage</class>
-   <extends>QWidget</extends>
-   <header>maintabpage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SettingsTabPage</class>
    <extends>QWidget</extends>
    <header>settingstabpage.h</header>
@@ -365,11 +221,6 @@
    <extends>QWidget</extends>
    <header>managegroupstabpage.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>InfiniteStashTreeView</class>
-   <extends>QTreeView</extends>
-   <header>infinitestashtreeview.h</header>
   </customwidget>
   <customwidget>
    <class>GroupManagerTreeView</class>
