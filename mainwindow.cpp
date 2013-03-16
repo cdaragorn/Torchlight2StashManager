@@ -11,6 +11,9 @@
 #include <optionkeys.h>
 #include <torchlight2stash.h>
 #include <torchlight2item.h>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <infinitestashstandarditemmodel.h>
 
 #include <iostream>
 using namespace std;
@@ -21,17 +24,57 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
+
     ui->SettingsTab->SetTorchlight2SharedStashFileButton(ui->SettingsTabTorchlight2FolderButton);
     ui->SettingsTab->SetTorchlight2SharedStashFileLineEdit(ui->SettingsTabTorchlight2FolderLineEdit);
     ui->SettingsTab->SetInfiniteStashFolderButton(ui->SettingsTabStashesFolderButton);
     ui->SettingsTab->SetInfiniteStashFolderLineEdit(ui->SettingsTabStashesFolderLineEdit);
 
     ui->MainTab->SetTorchlight2SharedStashItemsListWidget(ui->MainTabSharedStashItemsListWidget);
-    ui->MainTab->SetInfiniteStashItemsListWidget(ui->MainTabInfiniteStashItemsListWidget);
     ui->MainTab->SetGroupsTable(&mGroupsTable);
     ui->MainTab->SetNumberOfItemsInSharedStashLabel(ui->MainTabNumberOfItemsInSharedStashLabel);
     ui->MainTab->SetGroupsComboBox(ui->MainTabGroupsComboBox);
     ui->MainTab->SetSettingsTabPage(ui->SettingsTab);
+
+
+    InfiniteStashStandardItemModel* model = new InfiniteStashStandardItemModel();
+    QStandardItem* parentItem = new QStandardItem("root");
+    parentItem->setDragEnabled(false);
+    parentItem->setEditable(false);
+    QIcon icon("://images/Open-Folder.png");
+    parentItem->setIcon(icon);
+    model->appendRow(parentItem);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        QStandardItem* item = new QStandardItem(QString("item %0").arg(i));
+        item->setEditable(false);
+        item->setDragEnabled(false);
+        item->setIcon(icon);
+        parentItem->appendRow(item);
+        parentItem = item;
+    }
+
+    QStringList labels;
+    labels.append("one");
+    labels.append("two");
+    labels.append("three");
+    labels.append("four");
+
+//    model->setVerticalHeaderLabels(labels);
+
+    ui->TestTreeView->setModel(model);
+
+    ui->MainTab->SetInfiniteStashTreeView(ui->TestTreeView);
+    ui->MainTab->SetInfiniteStashTreeViewModel(model);
+
+
+    ui->ManageGroupsTab->SetGroupsTable(&mGroupsTable);
+    ui->ManageGroupsTab->SetGroupNameLineEdit(ui->ManageGroupsTabGroupNameLineEdit);
+    ui->ManageGroupsTab->SetAddGroupButton(ui->ManagerGroupsTabAddGroupButton);
+    ui->ManageGroupsTab->SetGroupManagerTreeView(ui->ManageGroupsTabGroupManagerTreeView);
+
 
 //    ui->MainTabControlWidget->move(0, 0);
 //    QLayout* layout = ui->MainTab->layout();
@@ -45,7 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->MainToolBar->addAction(QWhatsThis::createAction());
 
-    connect(ui->AddGroupButton, SIGNAL(pressed()), this, SLOT(OnAddGroup()));
+//    connect(ui->AddGroupButton, SIGNAL(pressed()), this, SLOT(OnAddGroup()));
 
     connect(&mOptions, SIGNAL(OptionsChanged(QString, QString)), this, SLOT(OnOptionsChanged()));
 

@@ -5,7 +5,6 @@
 #include <QListWidget>
 #include <QComboBox>
 #include <sharedstashlistwidget.h>
-#include <infinitestashitemslistwidget.h>
 #include <optioncollection.h>
 #include <optionkeys.h>
 #include <groupstable.h>
@@ -14,6 +13,8 @@
 #include <torchlight2stash.h>
 #include <torchlight2stashconverter.h>
 #include <settingstabpage.h>
+#include <infinitestashtreeview.h>
+#include <infinitestashstandarditemmodel.h>
 
 class MainTabPage : public QWidget
 {
@@ -39,9 +40,41 @@ public:
         }
     }
 
-    void SetInfiniteStashItemsListWidget(InfiniteStashItemsListWidget* inListWidget)
+    void SetInfiniteStashTreeView(InfiniteStashTreeView* inTreeView)
     {
-        mInfiniteStashItemsListWidget = inListWidget;
+        mInfiniteStashTreeView = inTreeView;
+
+        if (mInfiniteStashTreeView != NULL)
+        {
+            connect(mInfiniteStashTreeView,
+                    SIGNAL(itemDropped(QDropEvent*)), this,
+                    SLOT(OnItemDroppedOnInfiniteStash(QDropEvent*)));
+        }
+    }
+
+    void SetInfiniteStashTreeViewModel(InfiniteStashStandardItemModel* inModel)
+    {
+        mInfiniteStashTreeViewModel = inModel;
+
+        if (mInfiniteStashTreeViewModel != NULL)
+        {
+            connect(mInfiniteStashTreeViewModel,
+                    SIGNAL(rowsInserted(QModelIndex,int,int)), this,
+                    SLOT(OnInfiniteStashItemAdded(QModelIndex,int,int)));
+
+            connect(mInfiniteStashTreeViewModel,
+                    SIGNAL(columnsInserted(QModelIndex,int,int)), this,
+                    SLOT(OnInfiniteStashColumnInserted(QModelIndex,int,int)));
+
+            connect(mInfiniteStashTreeViewModel,
+                    SIGNAL(itemChanged(QStandardItem*)), this,
+                    SLOT(OnInfiniteStashItemChanged(QStandardItem*)));
+
+//            connect(mInfiniteStashTreeViewModel,
+//                    SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+//                    this,
+//                    SLOT(OnInfiniteStashDataChanged(QModelIndex,QModelIndex)));
+        }
     }
 
     void SetGroupsComboBox(QComboBox* inComboBox)
@@ -98,14 +131,22 @@ private slots:
     void OnTorchlight2SharedStashItemsRemoved(QList<QListWidgetItem*> item);
     void OnTorchlight2SharedStashFileChanged(QString fileLocation);
     void OnInfiniteStashFolderChanged(QString folderLocation);
+    void OnInfiniteStashItemAdded(const QModelIndex& parent, int start, int end);
+    void OnInfiniteStashColumnInserted(const QModelIndex& parent, int start, int end);
+    void OnInfiniteStashItemChanged(QStandardItem* item);
+    void OnItemDroppedOnInfiniteStash(QDropEvent* event);
+//    void OnInfiniteStashDataChanged(QModelIndex first, QModelIndex last);
+//    void OnItemDroppedOnInfiniteStash();
 
 private:
     OptionCollection* mOptions;
     SharedStashListWidget* mTorchlight2SharedStashItemsListWidget;
-    InfiniteStashItemsListWidget* mInfiniteStashItemsListWidget;
     QComboBox* mGroupsComboBox;
     QLabel* mNumberOfItemsInSharedStashLabel;
     GroupsTable* mGroupsTable;
+
+    InfiniteStashTreeView* mInfiniteStashTreeView;
+    InfiniteStashStandardItemModel* mInfiniteStashTreeViewModel;
 
     SettingsTabPage* mSettingsTabPage;
 

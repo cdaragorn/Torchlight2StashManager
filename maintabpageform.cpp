@@ -1,130 +1,115 @@
-#include "maintabpage.h"
+#include "maintabpageform.h"
+#include "ui_maintabpageform.h"
 
-#include <QDebug>
-#include <QStandardItemModel>
+#include <torchlight2stashconverter.h>
 #include <QMimeData>
-#include <QVariant>
 
-MainTabPage::MainTabPage(QWidget *parent) :
-    QWidget(parent)
+MainTabPageForm::MainTabPageForm(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::MainTabPageForm)
 {
-    mOptions = NULL;
-    mTorchlight2SharedStashItemsListWidget = NULL;
-    mGroupsComboBox = NULL;
-    mNumberOfItemsInSharedStashLabel = NULL;
-    mGroupsTable = NULL;
+    ui->setupUi(this);
+
     mTorchlight2Stash = NULL;
-    mSettingsTabPage = NULL;
-    mInfiniteStashTreeView = NULL;
-    mInfiniteStashTreeViewModel = NULL;
+
+    mIsLoading = false;
+
+    connect(ui->Torchlight2SharedStashListWidget,
+            SIGNAL(itemAdded(QListWidgetItem*)), this,
+            SLOT(OnTorchlight2SharedStashItemAdded(QListWidgetItem*)));
+
+    connect(ui->Torchlight2SharedStashListWidget,
+            SIGNAL(itemsAboutToBeRemoved(QList<QListWidgetItem*>)), this,
+            SLOT(OnTorchlight2SharedStashItemsRemoved(QList<QListWidgetItem*>)));
+
+
+    connect(ui->InfiniteStashItemsTreeView,
+            SIGNAL(itemDropped(QDropEvent*)), this,
+            SLOT(OnItemDroppedOnInfiniteStash(QDropEvent*)));
+
+
+    connect(mInfiniteStashTreeViewModel,
+            SIGNAL(rowsInserted(QModelIndex,int,int)), this,
+            SLOT(OnInfiniteStashItemAdded(QModelIndex,int,int)));
+
+    connect(mInfiniteStashTreeViewModel,
+            SIGNAL(columnsInserted(QModelIndex,int,int)), this,
+            SLOT(OnInfiniteStashColumnInserted(QModelIndex,int,int)));
+
+    connect(mInfiniteStashTreeViewModel,
+            SIGNAL(itemChanged(QStandardItem*)), this,
+            SLOT(OnInfiniteStashItemChanged(QStandardItem*)));
+}
+
+MainTabPageForm::~MainTabPageForm()
+{
+    delete ui;
+}
+
+void MainTabPageForm::FillSharedStashList(QString inTorchlight2SharedStashFile)
+{
+
+    mIsLoading = true;
+
+    ui->Torchlight2SharedStashListWidget->clear();
+
+    if (mTorchlight2Stash != NULL)
+        delete mTorchlight2Stash;
+
+    QByteArray decryptedBytes;
+
+    QFile stashFile(inTorchlight2SharedStashFile);
+
+    if (stashFile.open(QIODevice::ReadOnly))
+    {
+        Torchlight2StashConverter::DescrambleFile(stashFile.readAll(), decryptedBytes);
+        stashFile.close();
+
+        mTorchlight2Stash = new Torchlight2Stash(decryptedBytes);
+
+        QList<Torchlight2Item> itemsInStash = mTorchlight2Stash->StashItems();
+//        QList<QString> keys = itemsInStash.keys();
+
+        for (int i = 0; i < itemsInStash.count(); ++i)
+        {
+            QListWidgetItem* item = new QListWidgetItem(itemsInStash[i].Name());
+//                item->setFlags(item->flags() ^ Qt::ItemIsDropEnabled);
+
+            QVariant itemData = QVariant::fromValue(itemsInStash[i].Bytes());
+//            QVariant itemData(*itemsInStash[keys[i]]);
+            item->setData(Qt::UserRole, itemData);
+            item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
+            ui->Torchlight2SharedStashListWidget->addItem(item);
+        }
+    }
 
     mIsLoading = false;
 }
 
-MainTabPage::~MainTabPage()
+void MainTabPageForm::OnTorchlight2SharedStashItemAdded(QListWidgetItem* item)
 {
-    if (mTorchlight2Stash != NULL)
-        delete mTorchlight2Stash;
+    qint32 count = ui->Torchlight2SharedStashListWidget->count();
+    ui->SharedStashItemCountLabel->setText(QString::number(count));
 }
 
-
-void MainTabPage::FillGroupsComboBox()
+void MainTabPageForm::OnTorchlight2SharedStashItemsRemoved(QList<QListWidgetItem*> items)
 {
-    if (mGroupsComboBox != NULL)
-    {
-        mGroupsComboBox->clear();
-        mGroupsComboBox->addItem("All Items");
-        mGroupsComboBox->addItem("Items not in a group");
-        mGroupsComboBox->insertSeparator(3);
+    qint32 count = ui->Torchlight2SharedStashListWidget->count() - items.count();
 
-        if (mGroupsTable != NULL)
-        {
-            QList<Group> groups = mGroupsTable->GetAllGroups();
-            QList<Group>::const_iterator it;
-
-            for (it = groups.constBegin(); it != groups.constEnd(); ++it)
-            {
-                Group nextGroup = *it;
-                mGroupsComboBox->addItem(nextGroup.groupName, nextGroup.groupId);
-//                mGroupsComboBox->addItem(it.value(), it.key());
-            }
-        }
-    }
+    ui->SharedStashItemCountLabel->setText(QString::number(count));
 }
 
-
-void MainTabPage::FillSharedStashList(QString fileLocation)
-{
-    if (mTorchlight2SharedStashItemsListWidget != NULL)
-    {
-        mIsLoading = true;
-
-        mTorchlight2SharedStashItemsListWidget->clear();
-
-        if (mTorchlight2Stash != NULL)
-            delete mTorchlight2Stash;
-
-        QByteArray decryptedBytes;
-
-        QFile stashFile(fileLocation);
-
-        if (stashFile.open(QIODevice::ReadOnly))
-        {
-            Torchlight2StashConverter::DescrambleFile(stashFile.readAll(), decryptedBytes);
-            stashFile.close();
-
-            mTorchlight2Stash = new Torchlight2Stash(decryptedBytes);
-
-            QList<Torchlight2Item> itemsInStash = mTorchlight2Stash->StashItems();
-    //        QList<QString> keys = itemsInStash.keys();
-
-            for (int i = 0; i < itemsInStash.count(); ++i)
-            {
-                QListWidgetItem* item = new QListWidgetItem(itemsInStash[i].Name());
-//                item->setFlags(item->flags() ^ Qt::ItemIsDropEnabled);
-
-                QVariant itemData = QVariant::fromValue(itemsInStash[i].Bytes());
-    //            QVariant itemData(*itemsInStash[keys[i]]);
-                item->setData(Qt::UserRole, itemData);
-                item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
-                mTorchlight2SharedStashItemsListWidget->addItem(item);
-            }
-        }
-
-        mIsLoading = false;
-    }
-}
-
-void MainTabPage::OnTorchlight2SharedStashItemAdded(QListWidgetItem* item)
-{
-    if (mNumberOfItemsInSharedStashLabel != NULL && mTorchlight2SharedStashItemsListWidget != NULL)
-    {
-        qint32 count = mTorchlight2SharedStashItemsListWidget->count();
-        mNumberOfItemsInSharedStashLabel->setText(QString::number(count));
-    }
-}
-
-void MainTabPage::OnTorchlight2SharedStashItemsRemoved(QList<QListWidgetItem*> items)
-{
-    if (mNumberOfItemsInSharedStashLabel != NULL && mTorchlight2SharedStashItemsListWidget != NULL)
-    {
-        qint32 count = mTorchlight2SharedStashItemsListWidget->count() - items.count();
-
-        mNumberOfItemsInSharedStashLabel->setText(QString::number(count));
-    }
-}
-
-void MainTabPage::OnTorchlight2SharedStashFileChanged(QString fileLocation)
+void MainTabPageForm::OnTorchlight2SharedStashFileChanged(QString fileLocation)
 {
     FillSharedStashList(fileLocation);
 }
 
-void MainTabPage::OnInfiniteStashFolderChanged(QString folderLocation)
+void MainTabPageForm::OnInfiniteStashFolderChanged(QString folderLocation)
 {
 
 }
 
-void MainTabPage::OnInfiniteStashItemAdded(const QModelIndex& parent, int start, int end)
+void MainTabPageForm::OnInfiniteStashItemAdded(const QModelIndex& parent, int start, int end)
 {
     QStandardItemModel* model = mInfiniteStashTreeViewModel;
 
@@ -134,7 +119,7 @@ void MainTabPage::OnInfiniteStashItemAdded(const QModelIndex& parent, int start,
     }
 }
 
-void MainTabPage::OnInfiniteStashColumnInserted(const QModelIndex& parent, int start, int end)
+void MainTabPageForm::OnInfiniteStashColumnInserted(const QModelIndex& parent, int start, int end)
 {
     QStandardItemModel* model = mInfiniteStashTreeViewModel;
 
@@ -144,15 +129,15 @@ void MainTabPage::OnInfiniteStashColumnInserted(const QModelIndex& parent, int s
     }
 }
 
-void MainTabPage::OnInfiniteStashItemChanged(QStandardItem* item)
+void MainTabPageForm::OnInfiniteStashItemChanged(QStandardItem* item)
 {
     int f = 3;
 }
 
-void MainTabPage::OnItemDroppedOnInfiniteStash(QDropEvent* event)
+void MainTabPageForm::OnItemDroppedOnInfiniteStash(QDropEvent* event)
 {
     QStringList types = event->mimeData()->formats();
-    QStandardItem* itemDroppedOn = mInfiniteStashTreeViewModel->itemFromIndex(mInfiniteStashTreeView->indexAt(event->pos()));
+    QStandardItem* itemDroppedOn = mInfiniteStashTreeViewModel->itemFromIndex(ui->InfiniteStashItemsTreeView->indexAt(event->pos()));
 
     if (itemDroppedOn != NULL)
     {
@@ -168,16 +153,16 @@ void MainTabPage::OnItemDroppedOnInfiniteStash(QDropEvent* event)
     //add it to the item's parent
 //    QAbstractItemView::DropIndicatorPosition p = mInfiniteStashTreeView->dropIndicatorPosition();
     //If this is false, then the item was added to the dropped on item's parent
-    bool wasOnItem = mInfiniteStashTreeView->wasDropIndicatorOnItem();
+    bool wasOnItem = ui->InfiniteStashItemsTreeView->wasDropIndicatorOnItem();
 
     if (!wasOnItem)
     {
         itemDroppedOn = itemDroppedOn->parent();
     }
 
-    if (event->source() == mTorchlight2SharedStashItemsListWidget)
+    if (event->source() == ui->Torchlight2SharedStashListWidget)
     {
-        QList<QListWidgetItem*> selectedItems = mTorchlight2SharedStashItemsListWidget->selectedItems();
+        QList<QListWidgetItem*> selectedItems = ui->Torchlight2SharedStashListWidget->selectedItems();
 
         for (int i = 0; i < selectedItems.length(); ++i)
         {
@@ -200,9 +185,9 @@ void MainTabPage::OnItemDroppedOnInfiniteStash(QDropEvent* event)
 
         int w = 3;
     }
-    else if (event->source() == mInfiniteStashTreeView)
+    else if (event->source() == ui->InfiniteStashItemsTreeView)
     {
-        QModelIndex index = mInfiniteStashTreeView->currentIndex();
+        QModelIndex index = ui->InfiniteStashItemsTreeView->currentIndex();
 
         QStandardItem* nextItem = mInfiniteStashTreeViewModel->itemFromIndex(index);
 
@@ -226,7 +211,7 @@ void MainTabPage::OnItemDroppedOnInfiniteStash(QDropEvent* event)
         QMap<int, QVariant> roleDataMap;
         inputStream >> row >> col >> roleDataMap;
 
-        QListWidgetItem* testItem = mTorchlight2SharedStashItemsListWidget->item(row);
+        QListWidgetItem* testItem = ui->Torchlight2SharedStashListWidget->item(row);
 
         for (int i = 0; i < itemDroppedOn->rowCount(); ++i)
         {

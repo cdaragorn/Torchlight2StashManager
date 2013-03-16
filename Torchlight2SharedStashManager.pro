@@ -26,10 +26,14 @@ SOURCES += main.cpp\
     optionkeys.cpp \
     torchlight2stash.cpp \
     maintabpage.cpp \
-    infinitestashitemslistwidget.cpp \
     managegroupstabpage.cpp \
     customlistwidget.cpp \
-    torchlight2item.cpp
+    torchlight2item.cpp \
+    infinitestashstandarditemmodel.cpp \
+    infinitestashtreeview.cpp \
+    groupmanagertreeview.cpp \
+    groupmanagerstandarditemmodel.cpp \
+    maintabpageform.cpp
 
 HEADERS  += mainwindow.h \
     sharedstashlistwidget.h \
@@ -45,12 +49,17 @@ HEADERS  += mainwindow.h \
     torchlight2stash.h \
     tools.h \
     maintabpage.h \
-    infinitestashitemslistwidget.h \
     managegroupstabpage.h \
     customlistwidget.h \
-    torchlight2item.h
+    torchlight2item.h \
+    infinitestashstandarditemmodel.h \
+    infinitestashtreeview.h \
+    groupmanagertreeview.h \
+    groupmanagerstandarditemmodel.h \
+    maintabpageform.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    maintabpageform.ui
 
 RESOURCES += \
     images.qrc
