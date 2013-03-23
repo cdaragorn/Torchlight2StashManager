@@ -13,18 +13,18 @@ Qt::ItemFlags InfiniteStashStandardItemModel::flags(const QModelIndex &index) co
 {
     Qt::ItemFlags result = QStandardItemModel::flags(index);
 
-    if (index.isValid())
-    {
-        QStandardItem* raw = itemFromIndex(index);
+//    if (index.isValid())
+//    {
+//        QStandardItem* raw = itemFromIndex(index);
 
-        result = raw->flags();
+//        result = raw->flags();
 
-        if ((result & Qt::ItemIsDragEnabled))
-        {
-            result &= ~Qt::ItemIsDropEnabled;
-        }
+//        if ((result & Qt::ItemIsDragEnabled))
+//        {
+//            result &= ~Qt::ItemIsDropEnabled;
+//        }
 
-    }
+//    }
 
     return result;
 }

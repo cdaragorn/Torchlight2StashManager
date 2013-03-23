@@ -58,22 +58,7 @@ public:
 
         if (mInfiniteStashTreeViewModel != NULL)
         {
-            connect(mInfiniteStashTreeViewModel,
-                    SIGNAL(rowsInserted(QModelIndex,int,int)), this,
-                    SLOT(OnInfiniteStashItemAdded(QModelIndex,int,int)));
 
-            connect(mInfiniteStashTreeViewModel,
-                    SIGNAL(columnsInserted(QModelIndex,int,int)), this,
-                    SLOT(OnInfiniteStashColumnInserted(QModelIndex,int,int)));
-
-            connect(mInfiniteStashTreeViewModel,
-                    SIGNAL(itemChanged(QStandardItem*)), this,
-                    SLOT(OnInfiniteStashItemChanged(QStandardItem*)));
-
-//            connect(mInfiniteStashTreeViewModel,
-//                    SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-//                    this,
-//                    SLOT(OnInfiniteStashDataChanged(QModelIndex,QModelIndex)));
         }
     }
 
@@ -131,10 +116,8 @@ private slots:
     void OnTorchlight2SharedStashItemsRemoved(QList<QListWidgetItem*> item);
     void OnTorchlight2SharedStashFileChanged(QString fileLocation);
     void OnInfiniteStashFolderChanged(QString folderLocation);
-    void OnInfiniteStashItemAdded(const QModelIndex& parent, int start, int end);
-    void OnInfiniteStashColumnInserted(const QModelIndex& parent, int start, int end);
-    void OnInfiniteStashItemChanged(QStandardItem* item);
     void OnItemDroppedOnInfiniteStash(QDropEvent* event);
+//    void OnItemDraggedToTorchlight2SharedStash(QDragEnterEvent* event);
 //    void OnInfiniteStashDataChanged(QModelIndex first, QModelIndex last);
 //    void OnItemDroppedOnInfiniteStash();
 

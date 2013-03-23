@@ -27,9 +27,13 @@ private:
     QMenu* mContextMenu;
     
 signals:
+    void dragEntered(QDragEnterEvent* event);
 
     
 public slots:
+
+protected slots:
+    virtual void dragEnterEvent(QDragEnterEvent *event);
 
 private slots:
     void OnAction();

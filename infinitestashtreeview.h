@@ -22,6 +22,7 @@ signals:
     
 public slots:
 //    void OnItemInsertedToModel(QStandardItem* item);
+    virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
     virtual void dragMoveEvent(QDragMoveEvent *event);
 

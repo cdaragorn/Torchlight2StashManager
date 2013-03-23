@@ -12,26 +12,26 @@ MainTabPageForm::MainTabPageForm(QWidget *parent) :
 
     mTorchlight2Stash = NULL;
 
-    mInfiniteStashTreeViewModel = new InfiniteStashStandardItemModel();
-    ui->InfiniteStashItemsTreeView->setModel(mInfiniteStashTreeViewModel);
+    mInfiniteStashTreeViewModel = NULL;
 
 
-    QStandardItem* parentItem = new QStandardItem("root");
-    parentItem->setDragEnabled(false);
-    parentItem->setEditable(false);
-    QIcon icon("://images/Open-Folder.png");
-    parentItem->setIcon(icon);
-    mInfiniteStashTreeViewModel->appendRow(parentItem);
 
-    for (int i = 0; i < 4; ++i)
-    {
-        QStandardItem* item = new QStandardItem(QString("item %0").arg(i));
-        item->setEditable(false);
-        item->setDragEnabled(false);
-        item->setIcon(icon);
-        parentItem->appendRow(item);
-        parentItem = item;
-    }
+//    QStandardItem* parentItem = new QStandardItem("root");
+//    parentItem->setDragEnabled(false);
+//    parentItem->setEditable(false);
+//    QIcon icon("://images/Open-Folder.png");
+//    parentItem->setIcon(icon);
+//    mInfiniteStashTreeViewModel->appendRow(parentItem);
+
+//    for (int i = 0; i < 4; ++i)
+//    {
+//        QStandardItem* item = new QStandardItem(QString("item %0").arg(i));
+//        item->setEditable(false);
+//        item->setDragEnabled(false);
+//        item->setIcon(icon);
+//        parentItem->appendRow(item);
+//        parentItem = item;
+//    }
 
     mIsLoading = false;
 
@@ -48,23 +48,25 @@ MainTabPageForm::MainTabPageForm(QWidget *parent) :
             SIGNAL(itemDropped(QDropEvent*)), this,
             SLOT(OnItemDroppedOnInfiniteStash(QDropEvent*)));
 
-
-    connect(mInfiniteStashTreeViewModel,
-            SIGNAL(rowsInserted(QModelIndex,int,int)), this,
-            SLOT(OnInfiniteStashItemAdded(QModelIndex,int,int)));
-
-    connect(mInfiniteStashTreeViewModel,
-            SIGNAL(columnsInserted(QModelIndex,int,int)), this,
-            SLOT(OnInfiniteStashColumnInserted(QModelIndex,int,int)));
-
-    connect(mInfiniteStashTreeViewModel,
-            SIGNAL(itemChanged(QStandardItem*)), this,
-            SLOT(OnInfiniteStashItemChanged(QStandardItem*)));
+    connect(ui->Torchlight2SharedStashListWidget,
+            SIGNAL(dragEntered(QDragEnterEvent*)),
+            this,
+            SLOT(OnItemDraggedToTorchlight2SharedStash(QDragEnterEvent*)));
 }
 
 MainTabPageForm::~MainTabPageForm()
 {
     delete ui;
+}
+
+void MainTabPageForm::SetInfiniteStashStandardItemModel(InfiniteStashStandardItemModel* inModel)
+{
+    mInfiniteStashTreeViewModel = inModel;
+
+    if (mInfiniteStashTreeViewModel != NULL)
+    {
+        ui->InfiniteStashItemsTreeView->setModel(mInfiniteStashTreeViewModel);
+    }
 }
 
 void MainTabPageForm::FillSharedStashList(QString inTorchlight2SharedStashFile)
@@ -98,7 +100,12 @@ void MainTabPageForm::FillSharedStashList(QString inTorchlight2SharedStashFile)
 
             QVariant itemData = QVariant::fromValue(itemsInStash[i].Bytes());
 //            QVariant itemData(*itemsInStash[keys[i]]);
+
+            //first user role is the items data
             item->setData(Qt::UserRole, itemData);
+
+            //second user role is a marker so we know that this is an item from the stash
+            item->setData(Qt::UserRole + 1, InfiniteStashStandardItemModel::StashItem);
             item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
             ui->Torchlight2SharedStashListWidget->addItem(item);
         }
@@ -130,30 +137,6 @@ void MainTabPageForm::OnInfiniteStashFolderChanged(QString folderLocation)
 
 }
 
-void MainTabPageForm::OnInfiniteStashItemAdded(const QModelIndex& parent, int start, int end)
-{
-    QStandardItemModel* model = mInfiniteStashTreeViewModel;
-
-    if (mInfiniteStashTreeViewModel->hasIndex(start, 0, parent))
-    {
-
-    }
-}
-
-void MainTabPageForm::OnInfiniteStashColumnInserted(const QModelIndex& parent, int start, int end)
-{
-    QStandardItemModel* model = mInfiniteStashTreeViewModel;
-
-    if (mInfiniteStashTreeViewModel->hasIndex(0, start, parent))
-    {
-
-    }
-}
-
-void MainTabPageForm::OnInfiniteStashItemChanged(QStandardItem* item)
-{
-    int f = 3;
-}
 
 void MainTabPageForm::OnItemDroppedOnInfiniteStash(QDropEvent* event)
 {
@@ -295,4 +278,36 @@ void MainTabPageForm::OnItemDroppedOnInfiniteStash(QDropEvent* event)
 //    }
 
 
+}
+
+
+/*
+ *  We capture this event in order to prevent groups from being dragged onto the
+ *  Torchlight 2 stash list.
+ *
+ */
+void MainTabPageForm::OnItemDraggedToTorchlight2SharedStash(QDragEnterEvent* event)
+{
+
+    if (event->source() == ui->InfiniteStashItemsTreeView)
+    {
+        QByteArray modelList = event->mimeData()->data("application/x-qabstractitemmodeldatalist");
+        QDataStream inputStream(&modelList, QIODevice::ReadOnly);
+
+        while (!inputStream.atEnd())
+        {
+            int row;
+            int col;
+            QMap<int, QVariant> roleDataMap;
+            inputStream >> row >> col >> roleDataMap;
+
+            QVariant itemType = roleDataMap[Qt::UserRole + 1];
+
+            if (itemType.toInt() == InfiniteStashStandardItemModel::Group)
+            {
+                event->ignore();
+                event->setDropAction(Qt::IgnoreAction);
+            }
+        }
+    }
 }

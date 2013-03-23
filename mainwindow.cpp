@@ -13,7 +13,6 @@
 #include <torchlight2item.h>
 #include <QStandardItemModel>
 #include <QStandardItem>
-#include <infinitestashstandarditemmodel.h>
 
 #include <iostream>
 using namespace std;
@@ -24,90 +23,24 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->MainTabPage->SetSettingsTabPage(ui->SettingsTab);
-
-    ui->SettingsTab->SetTorchlight2SharedStashFileButton(ui->SettingsTabTorchlight2FolderButton);
-    ui->SettingsTab->SetTorchlight2SharedStashFileLineEdit(ui->SettingsTabTorchlight2FolderLineEdit);
-    ui->SettingsTab->SetInfiniteStashFolderButton(ui->SettingsTabStashesFolderButton);
-    ui->SettingsTab->SetInfiniteStashFolderLineEdit(ui->SettingsTabStashesFolderLineEdit);
-
-//    ui->MainTab->SetTorchlight2SharedStashItemsListWidget(ui->MainTabSharedStashItemsListWidget);
-//    ui->MainTab->SetGroupsTable(&mGroupsTable);
-//    ui->MainTab->SetNumberOfItemsInSharedStashLabel(ui->MainTabNumberOfItemsInSharedStashLabel);
-//    ui->MainTab->SetGroupsComboBox(ui->MainTabGroupsComboBox);
-//    ui->MainTab->SetSettingsTabPage(ui->SettingsTab);
-
+    ui->MainTabPage->SetSettingsTabPage(ui->SettingsTabPage);
 
     InfiniteStashStandardItemModel* model = new InfiniteStashStandardItemModel();
-    QStandardItem* parentItem = new QStandardItem("root");
-    parentItem->setDragEnabled(false);
-    parentItem->setEditable(false);
-    QIcon icon("://images/Open-Folder.png");
-    parentItem->setIcon(icon);
-    model->appendRow(parentItem);
+    LoadGroups(model);
 
-    for (int i = 0; i < 4; ++i)
-    {
-        QStandardItem* item = new QStandardItem(QString("item %0").arg(i));
-        item->setEditable(false);
-        item->setDragEnabled(false);
-        item->setIcon(icon);
-        parentItem->appendRow(item);
-        parentItem = item;
-    }
-
-    QStringList labels;
-    labels.append("one");
-    labels.append("two");
-    labels.append("three");
-    labels.append("four");
-
-//    model->setVerticalHeaderLabels(labels);
-
-//    ui->TestTreeView->setModel(model);
-
-//    ui->MainTab->SetInfiniteStashTreeView(ui->TestTreeView);
-//    ui->MainTab->SetInfiniteStashTreeViewModel(model);
+    ui->MainTabPage->SetInfiniteStashStandardItemModel(model);
 
 
     ui->ManageGroupsTab->SetGroupsTable(&mGroupsTable);
-    ui->ManageGroupsTab->SetGroupNameLineEdit(ui->ManageGroupsTabGroupNameLineEdit);
-    ui->ManageGroupsTab->SetAddGroupButton(ui->ManagerGroupsTabAddGroupButton);
-    ui->ManageGroupsTab->SetGroupManagerTreeView(ui->ManageGroupsTabGroupManagerTreeView);
-
-
-//    ui->MainTabControlWidget->move(0, 0);
-//    QLayout* layout = ui->MainTab->layout();
-//    QPushButton* button = new QPushButton(ui->MainTab);
-//    button->setText("Boogey");
-//    button->move(180, 50);
-//    button->resize(80, 30);
-//    connect(button, SIGNAL(pressed()), this, SLOT(OnBoogeyClicked()));
+    ui->ManageGroupsTab->SetGroupManagerStandardItemModel(model);
 
     connect(ui->actionCreateNewStash, SIGNAL(triggered()), this, SLOT(OnCreateNewStashClicked()));
 
     ui->MainToolBar->addAction(QWhatsThis::createAction());
 
-//    connect(ui->AddGroupButton, SIGNAL(pressed()), this, SLOT(OnAddGroup()));
-
     connect(&mOptions, SIGNAL(OptionsChanged(QString, QString)), this, SLOT(OnOptionsChanged()));
 
-//    FillGroupsComboBox();
-
-//    layout->addWidget(button);
-//    QBoxLayout* layout = new QBoxLayout(QBoxLayout::TopToBottom);
-//    layout->addWidget(button);
-//    ui->MainTab->layout()->addWidget(button);
-//    ui->MainTab->addAction(button);
-//    QListWidgetItem* item = new QListWidgetItem(ui->SelectListWidget);
-//    item->setText("Button");
-//    QIcon* icon = new QIcon("://images/solid_iron_chest.png");
-
-//    item->setIcon(*icon);
-
     LoadOptions();
-
-
 }
 
 MainWindow::~MainWindow()
@@ -127,11 +60,31 @@ void MainWindow::LoadOptions()
 
         mOptions.Load(doc.documentElement());
 
-        ui->SettingsTab->Options(&mOptions);
+        ui->SettingsTabPage->Options(&mOptions);
         ui->MainTabPage->Options(&mOptions);
 //        ui->MainTab->Options(&mOptions);
     }
 
+}
+
+void MainWindow::LoadGroups(InfiniteStashStandardItemModel* inModel)
+{
+    QList<Group> rootItems = mGroupsTable.GetAllTopLevelGroups();
+
+    for (int i = 0; i < rootItems.length(); ++i)
+    {
+        Group nextGroup = rootItems[i];
+
+        if (nextGroup.groupId > 0)
+        {
+            QStandardItem* nextItem = new QStandardItem(nextGroup.groupName);
+            nextItem->setData(nextGroup.groupId, Qt::UserRole);
+            nextItem->setData(InfiniteStashStandardItemModel::Group, Qt::UserRole + 1);
+            QIcon icon("://images/Open-Folder.png");
+            nextItem->setIcon(icon);
+            inModel->appendRow(nextItem);
+        }
+    }
 }
 
 //void MainWindow::resizeEvent(QResizeEvent * inEvent)
@@ -151,22 +104,6 @@ void MainWindow::OnBoogeyClicked()
 void MainWindow::OnCreateNewStashClicked()
 {
     cerr << "create new stash!" << endl;
-}
-
-void MainWindow::OnAddGroup()
-{
-    AddGroupDialog groupsDialog(this);
-
-    if (groupsDialog.exec() == QDialog::Accepted)
-    {
-        if (groupsDialog.GroupName().length() > 0)
-        {
-            quint64 insertId = mGroupsTable.AddGroup(groupsDialog.GroupName());
-
-//            if (insertId > 0)
-//                ui->MainTabGroupsComboBox->addItem(groupsDialog.GroupName(), insertId);
-        }
-    }
 }
 
 

@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include "optioncollection.h"
 #include <groupstable.h>
+#include <infinitestashstandarditemmodel.h>
 
 
 namespace Ui
@@ -31,11 +32,11 @@ private:
 
 //    void FillGroupsComboBox();
     void LoadOptions();
+    void LoadGroups(InfiniteStashStandardItemModel* inModel);
 
 private slots:
     void OnBoogeyClicked();
     void OnCreateNewStashClicked();
-    void OnAddGroup();
     void OnOptionsChanged();
 
 };

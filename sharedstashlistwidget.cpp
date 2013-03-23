@@ -60,3 +60,9 @@ void SharedStashListWidget::dropEvent(QDropEvent *event)
 //    }
 }
 
+void SharedStashListWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+    QListWidget::dragEnterEvent(event);
+    dragEntered(event);
+}
+

@@ -33,7 +33,9 @@ SOURCES += main.cpp\
     infinitestashtreeview.cpp \
     groupmanagertreeview.cpp \
     groupmanagerstandarditemmodel.cpp \
-    maintabpageform.cpp
+    maintabpageform.cpp \
+    settingstabpageform.cpp \
+    managegroupstabpageform.cpp
 
 HEADERS  += mainwindow.h \
     sharedstashlistwidget.h \
@@ -56,10 +58,14 @@ HEADERS  += mainwindow.h \
     infinitestashtreeview.h \
     groupmanagertreeview.h \
     groupmanagerstandarditemmodel.h \
-    maintabpageform.h
+    maintabpageform.h \
+    settingstabpageform.h \
+    managegroupstabpageform.h
 
 FORMS    += mainwindow.ui \
-    maintabpageform.ui
+    maintabpageform.ui \
+    settingstabpageform.ui \
+    managegroupstabpageform.ui
 
 RESOURCES += \
     images.qrc

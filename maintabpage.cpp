@@ -124,30 +124,6 @@ void MainTabPage::OnInfiniteStashFolderChanged(QString folderLocation)
 
 }
 
-void MainTabPage::OnInfiniteStashItemAdded(const QModelIndex& parent, int start, int end)
-{
-    QStandardItemModel* model = mInfiniteStashTreeViewModel;
-
-    if (mInfiniteStashTreeViewModel->hasIndex(start, 0, parent))
-    {
-
-    }
-}
-
-void MainTabPage::OnInfiniteStashColumnInserted(const QModelIndex& parent, int start, int end)
-{
-    QStandardItemModel* model = mInfiniteStashTreeViewModel;
-
-    if (mInfiniteStashTreeViewModel->hasIndex(0, start, parent))
-    {
-
-    }
-}
-
-void MainTabPage::OnInfiniteStashItemChanged(QStandardItem* item)
-{
-    int f = 3;
-}
 
 void MainTabPage::OnItemDroppedOnInfiniteStash(QDropEvent* event)
 {

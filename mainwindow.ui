@@ -32,7 +32,7 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -42,103 +42,15 @@
         <string>Main</string>
        </attribute>
       </widget>
-      <widget class="ManageGroupsTabPage" name="ManageGroupsTab">
+      <widget class="ManageGroupsTabPageForm" name="ManageGroupsTab">
        <attribute name="title">
         <string>Manage Groups</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="1">
-         <widget class="QPushButton" name="ManagerGroupsTabAddGroupButton">
-          <property name="text">
-           <string>Add Group</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLineEdit" name="ManageGroupsTabGroupNameLineEdit"/>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="GroupManagerTreeView" name="ManageGroupsTabGroupManagerTreeView">
-          <property name="dragEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="dragDropMode">
-           <enum>QAbstractItemView::InternalMove</enum>
-          </property>
-          <property name="defaultDropAction">
-           <enum>Qt::MoveAction</enum>
-          </property>
-          <property name="indentation">
-           <number>10</number>
-          </property>
-          <property name="headerHidden">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </widget>
-      <widget class="SettingsTabPage" name="SettingsTab">
+      <widget class="SettingsTabPageForm" name="SettingsTabPage">
        <attribute name="title">
-        <string>Settings</string>
+        <string>Page</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QLabel" name="SettingsTabTorchlight2FolderLabel">
-          <property name="text">
-           <string>Torchlight 2 Folder</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="SettingsTabTorchlight2FolderButton">
-          <property name="text">
-           <string>Set Folder</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="SettingsTabTorchlight2FolderLineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="SettingsTabStashesFolderButton">
-          <property name="text">
-           <string>Set Folder</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="SettingsTabStashesFolderLineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="SettingsTabStashesFolderLabel">
-          <property name="text">
-           <string>Folder To Store Stashes In</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="3">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
       </widget>
      </widget>
     </item>
@@ -211,26 +123,21 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>SettingsTabPage</class>
-   <extends>QWidget</extends>
-   <header>settingstabpage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ManageGroupsTabPage</class>
-   <extends>QWidget</extends>
-   <header>managegroupstabpage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GroupManagerTreeView</class>
-   <extends>QTreeView</extends>
-   <header>groupmanagertreeview.h</header>
-  </customwidget>
-  <customwidget>
    <class>MainTabPageForm</class>
    <extends>QWidget</extends>
    <header>maintabpageform.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SettingsTabPageForm</class>
+   <extends>QWidget</extends>
+   <header>settingstabpageform.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ManageGroupsTabPageForm</class>
+   <extends>QWidget</extends>
+   <header>managegroupstabpageform.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
