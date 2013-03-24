@@ -37,6 +37,7 @@ public slots:
 
 private slots:
     void OnAddGroupButtonClicked();
+    void OnGroupBeingDeleted(qint64 inGroup);
     
 private:
     Ui::ManageGroupsTabPageForm *ui;

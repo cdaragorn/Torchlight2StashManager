@@ -10,8 +10,14 @@ ManageGroupsTabPageForm::ManageGroupsTabPageForm(QWidget *parent) :
     ui->setupUi(this);
 
     mGroupManagerStandardItemModel = NULL;
+    mGroupsTable = NULL;
 
     connect(ui->AddGroupPushButton, SIGNAL(clicked()), this, SLOT(OnAddGroupButtonClicked()));
+
+    connect(ui->GroupNameLineEdit, SIGNAL(returnPressed()), this, SLOT(OnAddGroupButtonClicked()));
+
+    connect(ui->GroupsTreeView, SIGNAL(groupDeleted(qint64)), this,
+            SLOT(OnGroupBeingDeleted(qint64)));
 }
 
 ManageGroupsTabPageForm::~ManageGroupsTabPageForm()
@@ -35,17 +41,28 @@ void ManageGroupsTabPageForm::OnAddGroupButtonClicked()
 
     if (newGroupName.length() > 0)
     {
-        qint64 newGroupId = mGroupsTable->AddGroup(newGroupName);
+        Group groupToAdd;
+        groupToAdd.groupName = newGroupName;
+        qint64 newGroupId = mGroupsTable->AddGroup(groupToAdd);
 
         if (newGroupId > 0)
         {
             QVariant id(newGroupId);
             QStandardItem* newGroupItem = new QStandardItem(newGroupName);
             newGroupItem->setData(id, Qt::UserRole);
+            newGroupItem->setData(InfiniteStashStandardItemModel::Group, Qt::UserRole + 1);
             QIcon icon("://images/Open-Folder.png");
             newGroupItem->setIcon(icon);
             mGroupManagerStandardItemModel->appendRow(newGroupItem);
             ui->GroupNameLineEdit->clear();
         }
+    }
+}
+
+void ManageGroupsTabPageForm::OnGroupBeingDeleted(qint64 inGroup)
+{
+    if (mGroupsTable != NULL && inGroup > 0)
+    {
+        mGroupsTable->DeleteGroup(inGroup);
     }
 }

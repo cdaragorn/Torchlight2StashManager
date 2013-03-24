@@ -13,6 +13,12 @@ SharedStashListWidget::SharedStashListWidget(QWidget *parent) :
 //    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
+SharedStashListWidget::~SharedStashListWidget()
+{
+    if (mContextMenu != NULL)
+        delete mContextMenu;
+}
+
 void SharedStashListWidget::contextMenuEvent(QContextMenuEvent * inEvent)
 {
     mContextMenu->popup(inEvent->globalPos());

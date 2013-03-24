@@ -44,20 +44,22 @@ Group GroupsTable::ParseRecord(QSqlRecord inRecord)
         QSqlField parentId = inRecord.field(ParentGroupId);
         QSqlField groupId = inRecord.field(GroupId);
 
-        if (!groupId.isNull() && groupId.isValid() &&
-                !groupName.isNull() && groupName.isValid() &&
-                !parentId.isNull() && parentId.isValid())
-        {
+//        if (!groupId.isNull() && groupId.isValid() &&
+//                !groupName.isNull() && groupName.isValid() &&
+//                !parentId.isNull() && parentId.isValid() &&
+//                !orderNumber.isNull() && orderNumber.isValid())
+//        {
             result.groupId = groupId.value().toLongLong();
             result.groupName = groupName.value().toString();
             result.parentId = parentId.value().toLongLong();
-        }
+//        }
     }
 
     return result;
 }
 
-qint64 GroupsTable::AddGroup(QString newGroupName)
+
+qint64 GroupsTable::AddGroup(Group groupToAdd)
 {
     qint64 result = 0;
     QSqlDatabase db = GetDatabase();
@@ -66,9 +68,11 @@ qint64 GroupsTable::AddGroup(QString newGroupName)
     {
         QSqlQuery query(db);
 
-        if (query.prepare("INSERT INTO groups (groupName) VALUES (:newGroupName)"))
+        if (query.prepare("INSERT INTO groups (" + GroupName + ", " + ParentGroupId +
+                          ") VALUES (:newGroupName, :parentGroupId)"))
         {
-            query.bindValue(":newGroupName", newGroupName);
+            query.bindValue(":newGroupName", groupToAdd.groupName);
+            query.bindValue(":parentGroupId", groupToAdd.parentId);
 
             if (!query.exec())
             {
@@ -164,7 +168,7 @@ QList<Group> GroupsTable::GetAllTopLevelGroups()
     {
         QSqlQuery query(db);
 
-        if (query.exec("SELECT * FROM groups WHERE " + ParentGroupId + " = 0"))
+        if (query.exec("SELECT * FROM groups WHERE " + ParentGroupId + " = 0 ORDER BY " + GroupName))
         {
             while (query.next())
             {
@@ -196,7 +200,8 @@ QList<Group> GroupsTable::GetAllChildGroups(qint64 groupId)
     {
         QSqlQuery query(db);
 
-        if (query.prepare("SELECT * FROM groups WHERE " + ParentGroupId + " = :groupId"))
+        if (query.prepare("SELECT * FROM groups WHERE " + ParentGroupId +
+                          " = :groupId ORDER BY " + GroupName))
         {
             query.bindValue(":groupId", groupId);
 
@@ -228,14 +233,48 @@ QList<Group> GroupsTable::GetAllChildGroups(qint64 groupId)
     return groups;
 }
 
+bool GroupsTable::EditGroup(Group editedGroup)
+{
+    bool result = false;
+
+    if (editedGroup.groupId > 0)
+    {
+        QSqlDatabase db = GetDatabase();
+
+        if (db.open())
+        {
+            QSqlQuery query(db);
+
+            if (query.prepare("UPDATE groups SET " + ParentGroupId + " = :parentGroupId, " +
+                              GroupName + " = :groupName WHERE " +
+                              GroupId + " = :groupId"))
+            {
+                query.bindValue(":parentGroupId", editedGroup.parentId);
+                query.bindValue(":groupName", editedGroup.groupName);
+                query.bindValue(":groupId", editedGroup.groupId);
+
+                result = query.exec();
+            }
+
+            if (!result)
+            {
+                PrintSqlError(query.lastError());
+            }
+
+            db.close();
+        }
+    }
+
+    return result;
+}
+
 bool GroupsTable::SetGroupParent(qint64 groupId, qint64 parentGroupId)
 {
     bool result = false;
     Group groupBeingSetAsParent = GetGroup(parentGroupId);
     Group groupBeingMoved = GetGroup(groupId);
 
-    if (groupBeingMoved.groupId > 0 && groupBeingMoved.groupName != "" &&
-            groupBeingSetAsParent.groupId > 0 && groupBeingSetAsParent.groupName != "")
+    if (groupBeingMoved.groupId > 0 && groupBeingMoved.groupName != "")
     {
 
         //If we are setting the groups parent as one of it's current children,
@@ -268,5 +307,44 @@ bool GroupsTable::SetGroupParent(qint64 groupId, qint64 parentGroupId)
             db.close();
         }
     }
+    return result;
+}
+
+/*
+ *  Deletes the passed in group id from the table
+ *
+ */
+bool GroupsTable::DeleteGroup(qint64 groupId)
+{
+    bool result = false;
+
+    if (groupId > 0)
+    {
+        QSqlDatabase db = GetDatabase();
+
+        if (db.open())
+        {
+            QSqlQuery query(db);
+
+            if (query.prepare("DELETE FROM groups WHERE " + GroupId + " = :groupId"))
+            {
+                query.bindValue(":groupId", groupId);
+
+                result = query.exec();
+
+                if (!result)
+                {
+                    PrintSqlError(query.lastError());
+                }
+            }
+            else
+            {
+                PrintSqlError(query.lastError());
+            }
+
+            db.close();
+        }
+    }
+
     return result;
 }

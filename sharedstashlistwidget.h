@@ -16,6 +16,7 @@ class SharedStashListWidget : public CustomListWidget
     Q_OBJECT
 public:
     explicit SharedStashListWidget(QWidget *parent = 0);
+    ~SharedStashListWidget();
 
 protected:
     virtual void contextMenuEvent(QContextMenuEvent * inEvent);

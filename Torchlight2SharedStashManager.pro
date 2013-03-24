@@ -20,13 +20,9 @@ SOURCES += main.cpp\
     groupstable.cpp \
     addgroupdialog.cpp \
     stashtogroupmappingtable.cpp \
-    stashestable.cpp \
-    settingstabpage.cpp \
     torchlight2stashconverter.cpp \
     optionkeys.cpp \
     torchlight2stash.cpp \
-    maintabpage.cpp \
-    managegroupstabpage.cpp \
     customlistwidget.cpp \
     torchlight2item.cpp \
     infinitestashstandarditemmodel.cpp \
@@ -35,7 +31,8 @@ SOURCES += main.cpp\
     groupmanagerstandarditemmodel.cpp \
     maintabpageform.cpp \
     settingstabpageform.cpp \
-    managegroupstabpageform.cpp
+    managegroupstabpageform.cpp \
+    stashitemstable.cpp
 
 HEADERS  += mainwindow.h \
     sharedstashlistwidget.h \
@@ -44,14 +41,10 @@ HEADERS  += mainwindow.h \
     groupstable.h \
     addgroupdialog.h \
     stashtogroupmappingtable.h \
-    stashestable.h \
-    settingstabpage.h \
     torchlight2stashconverter.h \
     optionkeys.h \
     torchlight2stash.h \
     tools.h \
-    maintabpage.h \
-    managegroupstabpage.h \
     customlistwidget.h \
     torchlight2item.h \
     infinitestashstandarditemmodel.h \
@@ -60,7 +53,8 @@ HEADERS  += mainwindow.h \
     groupmanagerstandarditemmodel.h \
     maintabpageform.h \
     settingstabpageform.h \
-    managegroupstabpageform.h
+    managegroupstabpageform.h \
+    stashitemstable.h
 
 FORMS    += mainwindow.ui \
     maintabpageform.ui \

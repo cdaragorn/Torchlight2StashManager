@@ -5,19 +5,7 @@
 #include <sqlitetable.h>
 #include <QList>
 
-struct Group
-{
-    qint64 groupId;
-    qint64 parentId;
-    QString groupName;
-
-    Group()
-    {
-        groupId = 0;
-        parentId = 0;
-        groupName = "";
-    }
-};
+struct Group;
 
 class GroupsTable : public SqliteTable
 {
@@ -25,12 +13,14 @@ class GroupsTable : public SqliteTable
 public:
     explicit GroupsTable(QString databaseName, QObject *parent = 0);
 
-    qint64 AddGroup(QString newGroupName);
+    qint64 AddGroup(Group groupToAdd);
     Group GetGroup(qint64 groupId);
     QList<Group> GetAllGroups();
     QList<Group> GetAllTopLevelGroups();
     QList<Group> GetAllChildGroups(qint64 groupId);
     bool SetGroupParent(qint64 groupId, qint64 parentGroupId);
+    bool EditGroup(Group editedGroup);
+    bool DeleteGroup(qint64 groupId);
     
 signals:
     
@@ -43,6 +33,22 @@ private:
     static const QString GroupName;
     static const QString ParentGroupId;
     
+};
+
+struct Group
+{
+public:
+    Group()
+    {
+        groupId = 0;
+        parentId = 0;
+        groupName = "";
+    }
+
+    qint64 groupId;
+    qint64 parentId;
+    QString groupName;
+
 };
 
 #endif // GROUPSTABLE_H
