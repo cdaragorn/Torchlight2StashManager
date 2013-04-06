@@ -28,12 +28,14 @@ public:
 signals:
     void torchlight2SharedStashFileChanged(QString fileLocation);
     void infiniteStashFolderChanged(QString folderLocation);
+    void maxItemsPerStashTabChanged(qint32 maxItemsPerStashTab);
 
 public slots:
 
 private slots:
     void OnSetTorchlight2SharedStashFileClicked();
     void OnSetInfiniteStashFolderClicked();
+    void OnMaxItemsPerStashTabValueChanged(qint32 newValue);
     
 private:
     Ui::SettingsTabPageForm *ui;

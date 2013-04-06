@@ -6,6 +6,8 @@
 #include <QList>
 #include <QHash>
 #include <QFileDialog>
+#include <QFileInfo>
+#include <QDir>
 
 #include <torchlight2stashconverter.h>
 #include <optionkeys.h>
@@ -25,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    mGroupsTable = new GroupsTable("database.sqlite");
 
+//    mGroupsTable = NULL;
+//    mStashItemsTable = NULL;
+
     ui->MainTabPage->SetSettingsTabPage(ui->SettingsTabPage);
 
     mInfiniteStashModel = new InfiniteStashStandardItemModel();
@@ -32,8 +37,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mInfiniteStashModel, SIGNAL(itemChanged(QStandardItem*)), this,
             SLOT(OnInfiniteStashModelItemChanged(QStandardItem*)));
 
-    LoadGroups();
+    connect(ui->SettingsTabPage, SIGNAL(infiniteStashFolderChanged(QString)), this,
+            SLOT(OnInfiniteStashFolderChanged(QString)));
 
+
+    ui->MainTabPage->SetStashItemsTable(mStashItemsTable);
     ui->MainTabPage->SetInfiniteStashStandardItemModel(mInfiniteStashModel);
 
     ui->ManageGroupsTab->SetGroupsTable(mGroupsTable);
@@ -64,8 +72,9 @@ void MainWindow::OnInfiniteStashModelItemChanged(QStandardItem* inItem)
         if (!itemType.isNull())
         {
             qint32 type = itemType.toInt();
-            if (type == InfiniteStashStandardItemModel::Group)
+            if (type == InfiniteStashStandardItemModel::GroupItemType)
             {
+                //if it's a group, update it's parent group id
                 QVariant idValue = inItem->data(Qt::UserRole);
                 QStandardItem* parentItem = inItem->parent();
                 Group groupToEdit;
@@ -89,7 +98,7 @@ void MainWindow::OnInfiniteStashModelItemChanged(QStandardItem* inItem)
                     mGroupsTable->EditGroup(groupToEdit);
                 }
             }
-            else if (type == InfiniteStashStandardItemModel::StashItem)
+            else if (type == InfiniteStashStandardItemModel::StashItemType)
             {
                 QVariant userData = inItem->data(Qt::UserRole);
 
@@ -97,15 +106,38 @@ void MainWindow::OnInfiniteStashModelItemChanged(QStandardItem* inItem)
                 {
                     QVariant parentGroupId = inItem->parent()->data(Qt::UserRole);
 
-                    StashItem item;
-                    item.item = userData.toByteArray();
-                    item.groupId = parentGroupId.toLongLong();
+                    StashItem itemDetails;
+                    itemDetails.item = userData.toByteArray();
+                    itemDetails.groupId = parentGroupId.toLongLong();
 
-                    qint64 itemId = mStashItemsTable->AddStashItem(item);
-                    inItem->setData(itemId, Qt::UserRole);
+                    qint64 itemId = mStashItemsTable->AddStashItem(itemDetails);
 
-                    //this must be done last because it triggers this event again
-                    inItem->setFlags(inItem->flags() & ~Qt::ItemIsDropEnabled);
+                    if (itemId > 0)
+                    {
+                        Torchlight2Stash* stash = ui->MainTabPage->GetTorchlight2Stash();
+
+                        Torchlight2Item item(itemDetails.item);
+
+                        stash->RemoveItemFromStash(item);
+
+                        QByteArray outputBuffer;
+
+                        if (Torchlight2StashConverter::ScrambleFile(stash->Bytes(), outputBuffer))
+                        {
+
+                            QFile stashFile(mOptions.Get(OptionKeys::Torchlight2SharedStashFile));
+
+                            if (stashFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+                            {
+                                stashFile.write(outputBuffer);
+                                stashFile.close();
+                                inItem->setData(itemId, Qt::UserRole);
+
+                                //this must be done last because it triggers this event again
+                                inItem->setFlags(inItem->flags() & ~Qt::ItemIsDropEnabled);
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -145,7 +177,9 @@ void MainWindow::LoadOptions()
 
         ui->SettingsTabPage->Options(&mOptions);
         ui->MainTabPage->Options(&mOptions);
-//        ui->MainTab->Options(&mOptions);
+
+        QString infiniteStashFolderPath = mOptions.Get(OptionKeys::StashManagerFolder);
+        OnInfiniteStashFolderChanged(infiniteStashFolderPath);
     }
 
 }
@@ -194,7 +228,7 @@ QStandardItem* MainWindow::AddGroupToModel(Group inGroup, QStandardItem* parentI
     {
         nextItem = new QStandardItem(inGroup.groupName);
         nextItem->setData(inGroup.groupId, Qt::UserRole);
-        nextItem->setData(InfiniteStashStandardItemModel::Group, Qt::UserRole + 1);
+        nextItem->setData(InfiniteStashStandardItemModel::GroupItemType, Qt::UserRole + 1);
         QIcon icon("://images/Open-Folder.png");
         nextItem->setIcon(icon);
 
@@ -219,7 +253,7 @@ void MainWindow::AddItemToModel(StashItem item, QStandardItem *parentGroup)
         QStandardItem* nextItem = new QStandardItem();
         nextItem->setText(itemDetails.Name());
         nextItem->setData(item.itemId, Qt::UserRole);
-        nextItem->setData(InfiniteStashStandardItemModel::StashItem, Qt::UserRole + 1);
+        nextItem->setData(InfiniteStashStandardItemModel::StashItemType, Qt::UserRole + 1);
         nextItem->setFlags(nextItem->flags() & ~Qt::ItemIsDropEnabled);
         parentGroup->appendRow(nextItem);
     }
@@ -264,5 +298,24 @@ void MainWindow::OnOptionsChanged()
 
         fileName.close();
     }
+}
+
+void MainWindow::OnInfiniteStashFolderChanged(QString folder)
+{
+    QDir folderPath(folder);
+
+    QString databaseName = "database.sqlite";
+    QString databaseFilePath = databaseName;
+
+    if (folderPath.exists())
+    {
+        databaseFilePath = folderPath.absoluteFilePath(databaseName);
+    }
+
+    mGroupsTable->DatabasePath(databaseFilePath);
+    mStashItemsTable->DatabasePath(databaseFilePath);
+
+    LoadGroups();
+
 }
 

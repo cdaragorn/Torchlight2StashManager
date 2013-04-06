@@ -9,6 +9,7 @@
 #include <QStandardItem>
 #include <infinitestashstandarditemmodel.h>
 #include <settingstabpageform.h>
+#include <stashitemstable.h>
 
 namespace Ui {
 class MainTabPageForm;
@@ -22,6 +23,8 @@ public:
     explicit MainTabPageForm(QWidget *parent = 0);
     ~MainTabPageForm();
 
+    Torchlight2Stash* GetTorchlight2Stash() { return mTorchlight2Stash; }
+
 
     void SetSettingsTabPage(SettingsTabPageForm* inSettingsTabPage)
     {
@@ -31,10 +34,18 @@ public:
         {
             connect(mSettingsTabPage, SIGNAL(torchlight2SharedStashFileChanged(QString)), this,
                     SLOT(OnTorchlight2SharedStashFileChanged(QString)));
+
+            connect(mSettingsTabPage, SIGNAL(maxItemsPerStashTabChanged(qint32)), this,
+                    SLOT(OnMaximumNumberOfItemsPerTabChanged(qint32)));
         }
     }
 
     void SetInfiniteStashStandardItemModel(InfiniteStashStandardItemModel* inModel);
+
+    void SetStashItemsTable(StashItemsTable* inTable)
+    {
+        mStashItemsTable = inTable;
+    }
 
     void Options(OptionCollection* inOptions)
     {
@@ -55,14 +66,16 @@ private slots:
     void OnTorchlight2SharedStashItemAdded(QListWidgetItem* item);
     void OnTorchlight2SharedStashItemsRemoved(QList<QListWidgetItem*> item);
     void OnTorchlight2SharedStashFileChanged(QString fileLocation);
-    void OnInfiniteStashFolderChanged(QString folderLocation);
-    void OnItemDroppedOnInfiniteStash(QDropEvent* event);
+    void OnMaximumNumberOfItemsPerTabChanged(qint32 newMax);
+//    void OnItemDroppedOnInfiniteStash(QDropEvent* event);
+    void OnItemDroppedOnTorchlight2SharedStash(QDropEvent* event);
     void OnItemDraggedToTorchlight2SharedStash(QDragEnterEvent* event);
     
 private:
     Ui::MainTabPageForm *ui;
 
     OptionCollection* mOptions;
+    StashItemsTable* mStashItemsTable;
     bool mIsLoading;
 
     InfiniteStashStandardItemModel* mInfiniteStashTreeViewModel;

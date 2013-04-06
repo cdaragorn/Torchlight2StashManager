@@ -5,10 +5,9 @@
 
 const QString SqliteTable::SqlConnectionName = "Torchlight2SharedStashSqliteConnection";
 
-SqliteTable::SqliteTable(QString databaseName, QObject *parent) :
-    QObject(parent)
+SqliteTable::SqliteTable()
 {
-    mDatabaseName = databaseName;
+
 }
 
 QSqlDatabase SqliteTable::GetDatabase()
@@ -28,6 +27,11 @@ QSqlDatabase SqliteTable::GetDatabase()
 SqliteTable::~SqliteTable()
 {
 
+}
+
+void SqliteTable::DatabaseName(QString filePath)
+{
+    mDatabaseName = filePath;
 }
 
 void SqliteTable::PrintSqlError(QSqlError error)

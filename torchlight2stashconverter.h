@@ -3,9 +3,9 @@
 
 #include <QObject>
 
-#define BASE_HEADER_SIZE 5
-#define CRC_SIZE 4
-#define FOOTER_SIZE 4
+#define BASE_STASH_HEADER_SIZE 5
+#define STASH_CRC_SIZE 4
+#define STASH_FOOTER_SIZE 4
 
 class Torchlight2StashConverter : public QObject
 {

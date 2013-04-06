@@ -14,8 +14,8 @@ public:
 
     enum ItemType
     {
-        Group,
-        StashItem
+        GroupItemType,
+        StashItemType
     };
     
 signals:

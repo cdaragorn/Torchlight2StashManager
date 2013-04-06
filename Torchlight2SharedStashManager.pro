@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     sqlitetable.cpp \
     groupstable.cpp \
     addgroupdialog.cpp \
-    stashtogroupmappingtable.cpp \
     torchlight2stashconverter.cpp \
     optionkeys.cpp \
     torchlight2stash.cpp \
@@ -40,7 +39,6 @@ HEADERS  += mainwindow.h \
     sqlitetable.h \
     groupstable.h \
     addgroupdialog.h \
-    stashtogroupmappingtable.h \
     torchlight2stashconverter.h \
     optionkeys.h \
     torchlight2stash.h \

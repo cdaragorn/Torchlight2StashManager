@@ -9,9 +9,10 @@ struct Group;
 
 class GroupsTable : public SqliteTable
 {
-    Q_OBJECT
 public:
-    explicit GroupsTable(QString databaseName, QObject *parent = 0);
+    explicit GroupsTable(QString databaseName);
+
+    void DatabasePath(QString filePath);
 
     qint64 AddGroup(Group groupToAdd);
     Group GetGroup(qint64 groupId);

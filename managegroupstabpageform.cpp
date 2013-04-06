@@ -50,7 +50,7 @@ void ManageGroupsTabPageForm::OnAddGroupButtonClicked()
             QVariant id(newGroupId);
             QStandardItem* newGroupItem = new QStandardItem(newGroupName);
             newGroupItem->setData(id, Qt::UserRole);
-            newGroupItem->setData(InfiniteStashStandardItemModel::Group, Qt::UserRole + 1);
+            newGroupItem->setData(InfiniteStashStandardItemModel::GroupItemType, Qt::UserRole + 1);
             QIcon icon("://images/Open-Folder.png");
             newGroupItem->setIcon(icon);
             mGroupManagerStandardItemModel->appendRow(newGroupItem);

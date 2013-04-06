@@ -95,7 +95,7 @@ void InfiniteStashTreeView::dragEnterEvent(QDragEnterEvent *event)
             inputStream >> row >> col >> roleDataMap;
             QVariant itemType = roleDataMap[Qt::UserRole + 1];
 
-            if (itemType.toInt() == InfiniteStashStandardItemModel::Group)
+            if (itemType.toInt() == InfiniteStashStandardItemModel::GroupItemType)
             {
                 event->ignore();
                 event->setDropAction(Qt::IgnoreAction);
@@ -130,7 +130,7 @@ void InfiniteStashTreeView::dragMoveEvent(QDragMoveEvent *event)
     {
         QVariant itemType = itemDraggedOver->data(Qt::UserRole + 1);
 
-        if (itemType.toInt() == InfiniteStashStandardItemModel::StashItem)
+        if (itemType.toInt() == InfiniteStashStandardItemModel::StashItemType)
         {
             //dragging over another stash item and drop would
             //drop on the stash item, reject

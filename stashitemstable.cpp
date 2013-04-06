@@ -10,9 +10,15 @@ const QString StashItemsTable::ArmorAttributes = "armorAttributes";
 const QString StashItemsTable::MagicAttributes = "magicAttributes";
 const QString StashItemsTable::StashItemData = "stashItemData";
 
-StashItemsTable::StashItemsTable(QString databaseName, QObject *parent) :
-    SqliteTable(databaseName, parent)
+StashItemsTable::StashItemsTable(QString databaseName)
 {
+    DatabasePath(databaseName);
+}
+
+void StashItemsTable::DatabasePath(QString filePath)
+{
+    DatabaseName(filePath);
+
     QSqlDatabase db = GetDatabase();
 
     if (db.open())
@@ -127,41 +133,65 @@ qint64 StashItemsTable::AddStashItem(StashItem item)
 }
 
 
+bool StashItemsTable::DeleteStashItem(qint64 itemId)
+{
+    bool result = false;
+
+    QSqlDatabase db = GetDatabase();
+
+    if (db.open())
+    {
+        QSqlQuery query(db);
+
+        if (query.prepare("DELETE FROM stashItems WHERE " + StashItemId + " = :itemId"))
+        {
+            query.bindValue(":itemId", itemId);
+
+            result = query.exec();
+        }
+
+        if (!result)
+            PrintSqlError(query.lastError());
+
+        db.close();
+    }
+
+    return result;
+}
+
+
 StashItem StashItemsTable::GetStashItem(qint64 itemId)
 {
     StashItem result;
 
-    if (itemId > 0)
+    QSqlDatabase db = GetDatabase();
+
+    if (db.open())
     {
-        QSqlDatabase db = GetDatabase();
+        QSqlQuery query(db);
 
-        if (db.open())
+        if (query.prepare("SELECT * FROM stashItems WHERE " + StashItemId + " = :stashItemId"))
         {
-            QSqlQuery query(db);
+            query.bindValue(":stashItemId", itemId);
 
-            if (query.prepare("SELECT * FROM stashItems WHERE " + StashItemId + " = :stashItemId"))
+            if (query.exec())
             {
-                query.bindValue(":stashItemId", itemId);
-
-                if (query.exec())
+                if (query.next())
                 {
-                    if (query.next())
-                    {
-                        result = ParseRecord(query.record());
-                    }
-                }
-                else
-                {
-                    PrintSqlError(query.lastError());
+                    result = ParseRecord(query.record());
                 }
             }
             else
             {
                 PrintSqlError(query.lastError());
             }
-
-            db.close();
         }
+        else
+        {
+            PrintSqlError(query.lastError());
+        }
+
+        db.close();
     }
 
     return result;

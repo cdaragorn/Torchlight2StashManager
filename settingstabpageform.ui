@@ -14,12 +14,8 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QLabel" name="InfiniteStashFolderLabel">
-     <property name="text">
-      <string>Infinite Stash Folder</string>
-     </property>
-    </widget>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="Torchlight2SharedStashFolderLineEdit"/>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="Torchlight2SharedStashFolderLabel">
@@ -28,10 +24,14 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="Torchlight2SharedStashFolderLineEdit"/>
+   <item row="1" column="0">
+    <widget class="QLabel" name="InfiniteStashFolderLabel">
+     <property name="text">
+      <string>Infinite Stash Folder</string>
+     </property>
+    </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -58,6 +58,20 @@
     <widget class="QPushButton" name="InfiniteStashFolderPushButton">
      <property name="text">
       <string>Set Folder</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="Torchlight2SharedStashMaxNumberOfItemsLabel">
+     <property name="text">
+      <string>Maximum Number of Items to allow in the Shared Stash</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QSpinBox" name="Torchlight2SharedStashMaxNumberOfItemsSpinBox">
+     <property name="maximum">
+      <number>9999</number>
      </property>
     </widget>
    </item>

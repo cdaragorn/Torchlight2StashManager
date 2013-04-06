@@ -11,6 +11,7 @@ public:
 
     static const QString Torchlight2SharedStashFile;
     static const QString StashManagerFolder;
+    static const QString MaxNumberOfItemsPerStashTab;
 };
 
 #endif // OPTIONKEYS_H

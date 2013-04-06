@@ -24,7 +24,13 @@ public:
 
 //public slots:
     void Set(QString key, QString value);
-    QString Get(QString key) { return mOptions[key]; }
+    QString Get(QString key) const
+    {
+        QString result = mOptions.value(key);
+        return result;
+    }
+
+    bool HasOption(QString key) const { return mOptions.contains(key); }
 
 signals:
     void OptionsChanged(QString key, QString value);

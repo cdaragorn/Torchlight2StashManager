@@ -16,6 +16,9 @@ SettingsTabPageForm::SettingsTabPageForm(QWidget *parent) :
 
     connect(ui->Torchlight2SharedStashFolderPushButton, SIGNAL(pressed()), this,
             SLOT(OnSetTorchlight2SharedStashFileClicked()));
+
+    connect(ui->Torchlight2SharedStashMaxNumberOfItemsSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(OnMaxItemsPerStashTabValueChanged(qint32)));
 }
 
 SettingsTabPageForm::~SettingsTabPageForm()
@@ -31,6 +34,16 @@ void SettingsTabPageForm::LoadValues()
         ui->InfiniteStashFolderLineEdit->setToolTip(ui->InfiniteStashFolderLineEdit->text());
         ui->Torchlight2SharedStashFolderLineEdit->setText(mOptions->Get(OptionKeys::Torchlight2SharedStashFile));
         ui->Torchlight2SharedStashFolderLineEdit->setToolTip(ui->Torchlight2SharedStashFolderLineEdit->text());
+
+        QString maxItemsPerStashTab = mOptions->Get(OptionKeys::MaxNumberOfItemsPerStashTab);
+
+        if (maxItemsPerStashTab.isNull() || maxItemsPerStashTab.isEmpty())
+        {
+            maxItemsPerStashTab = "40";
+            mOptions->Set(OptionKeys::MaxNumberOfItemsPerStashTab, maxItemsPerStashTab);
+        }
+
+        ui->Torchlight2SharedStashMaxNumberOfItemsSpinBox->setValue(maxItemsPerStashTab.toInt());
     }
 }
 
@@ -57,7 +70,7 @@ void SettingsTabPageForm::OnSetTorchlight2SharedStashFileClicked()
             ui->Torchlight2SharedStashFolderLineEdit->setText(file);
             ui->Torchlight2SharedStashFolderLineEdit->setToolTip(file);
             mOptions->Set(OptionKeys::Torchlight2SharedStashFile, file);
-            torchlight2SharedStashFileChanged(file);
+            emit torchlight2SharedStashFileChanged(file);
         }
     }
 }
@@ -67,14 +80,35 @@ void SettingsTabPageForm::OnSetInfiniteStashFolderClicked()
 {
     if (mOptions != NULL)
     {
-        QString folder = QFileDialog::getExistingDirectory(this, "Choose folder");
+        QDir infiniteStashFolderPath(mOptions->Get(OptionKeys::StashManagerFolder));
+        QString folder = QDir::current().absolutePath();
 
-        if (!folder.isNull() && !folder.isEmpty())
+        if (infiniteStashFolderPath.exists())
+        {
+            folder = QFileDialog::getExistingDirectory(this, "Choose folder", infiniteStashFolderPath.absolutePath());
+        }
+        else
+        {
+            folder = QFileDialog::getExistingDirectory(this, "Choose folder");
+        }
+
+        infiniteStashFolderPath.setPath(folder);
+
+        if (infiniteStashFolderPath.exists())
         {
             ui->InfiniteStashFolderLineEdit->setText(folder);
             ui->InfiniteStashFolderLineEdit->setToolTip(folder);
             mOptions->Set(OptionKeys::StashManagerFolder, folder);
-            infiniteStashFolderChanged(folder);
+            emit infiniteStashFolderChanged(folder);
         }
+    }
+}
+
+void SettingsTabPageForm::OnMaxItemsPerStashTabValueChanged(qint32 newValue)
+{
+    if (mOptions != NULL)
+    {
+        mOptions->Set(OptionKeys::MaxNumberOfItemsPerStashTab, QString::number(newValue));
+        emit maxItemsPerStashTabChanged(newValue);
     }
 }

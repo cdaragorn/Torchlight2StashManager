@@ -4,15 +4,20 @@
 #include <QByteArray>
 #include <QString>
 
-class Torchlight2Item/* : public QObject*/
+class Torchlight2Item
 {
-//    Q_OBJECT
+
 public:
-    explicit Torchlight2Item(QByteArray itemBytes/*, QObject *parent = 0*/);
+    explicit Torchlight2Item(QByteArray itemBytes);
     ~Torchlight2Item();
 
-    QByteArray Bytes() { return mItemBytes; }
-    QString Name() { return mItemName; }
+    QByteArray Bytes() const { return mItemBytes; }
+    QString Name() const { return mItemName; }
+
+    void SetIndex(quint16 index);
+    qint32 GetItemNameEndPosition() const { return mItemNameEndPos; }
+
+    bool operator ==(const Torchlight2Item& other) const;
     
 //signals:
     
@@ -23,6 +28,8 @@ private:
 
     qint64 mItemUniqueTypeId;
     QString mItemName;
+
+    qint32 mItemNameEndPos;
 
     void ParseItemDetails();
 

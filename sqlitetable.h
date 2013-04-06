@@ -11,11 +11,10 @@
 #include <QMessageBox>
 #include <QHash>
 
-class SqliteTable : public QObject
+class SqliteTable
 {
-    Q_OBJECT
 public:
-    explicit SqliteTable(QString databaseName, QObject *parent = 0);
+    explicit SqliteTable();
     ~SqliteTable();
     
 signals:
@@ -25,6 +24,7 @@ public slots:
 protected:
     QSqlDatabase GetDatabase();
     void PrintSqlError(QSqlError);
+    void DatabaseName(QString filePath);
 
 private:
     QString mDatabaseName;

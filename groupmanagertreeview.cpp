@@ -36,7 +36,7 @@ void GroupManagerTreeView::OnDeleteGroupClicked()
     {
         QVariant itemType = itemClicked->data(Qt::UserRole + 1);
 
-        if (!itemType.isNull() && itemType.toInt() == InfiniteStashStandardItemModel::Group)
+        if (!itemType.isNull() && itemType.toInt() == InfiniteStashStandardItemModel::GroupItemType)
         {
             if (!itemClicked->hasChildren())
             {

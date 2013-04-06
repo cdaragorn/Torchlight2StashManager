@@ -4,9 +4,15 @@ const QString GroupsTable::GroupId = "groupId";
 const QString GroupsTable::GroupName = "groupName";
 const QString GroupsTable::ParentGroupId = "parentGroupId";
 
-GroupsTable::GroupsTable(QString databaseName, QObject *parent) :
-    SqliteTable(databaseName, parent)
+GroupsTable::GroupsTable(QString databaseName)
 {
+    DatabasePath(databaseName);
+}
+
+void GroupsTable::DatabasePath(QString filePath)
+{
+    DatabaseName(filePath);
+
     QSqlDatabase db = GetDatabase();
 
     if (db.open())

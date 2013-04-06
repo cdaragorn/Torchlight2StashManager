@@ -72,7 +72,7 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
 
     qint64 inputFileLength = inputBuffer.size();
 
-    if (inputFileLength > BASE_HEADER_SIZE)
+    if (inputFileLength > BASE_STASH_HEADER_SIZE)
     {
         // offset 4 is almost always 0x01, except on corrupted character and stash files
         if ((quint8)inputBuffer[4] == 0x01)
@@ -91,8 +91,8 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
                     qDebug() << "Beta version file, untested, your mileage may vary";
                     // for beta version we don't need to actually unscramble anything, just lop off the footer
                     // filesize of output will be the size of input minus four
-                    outputFileLength = inputFileLength - FOOTER_SIZE;
-                    inputOffset = BASE_HEADER_SIZE;
+                    outputFileLength = inputFileLength - STASH_FOOTER_SIZE;
+                    inputOffset = BASE_STASH_HEADER_SIZE;
 //                        isScrambled = false;
                     break;
                 }
@@ -100,17 +100,18 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
                 {
                     qDebug() << "Release version 1.9 file, scrambled, no checksum";
                     // filesize of output will be the size of input minus four
-                    outputFileLength = inputFileLength - FOOTER_SIZE;
-                    inputOffset = BASE_HEADER_SIZE;
+                    outputFileLength = inputFileLength - STASH_FOOTER_SIZE;
+                    inputOffset = BASE_STASH_HEADER_SIZE;
                     break;
                 }
                 case 0x41:
                 case 0x42:
+                case 0x44:
                 {
                     qDebug() << "Patched version 1.10, 1.11 or 1.12 file, scrambled, with checksum";
                     // filesize of output will be the size of input minus eight
-                    outputFileLength = inputFileLength - (CRC_SIZE + FOOTER_SIZE);
-                    inputOffset = BASE_HEADER_SIZE + CRC_SIZE;
+                    outputFileLength = inputFileLength - (STASH_CRC_SIZE + STASH_FOOTER_SIZE);
+                    inputOffset = BASE_STASH_HEADER_SIZE + STASH_CRC_SIZE;
                     break;
                 }
 
@@ -124,15 +125,15 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
 
             if (isKnownSaveFileVersion)
             {
-                qint64 outputOffset = BASE_HEADER_SIZE;
-                qint64 dataLength = inputFileLength - (inputOffset + FOOTER_SIZE);
+                qint64 outputOffset = BASE_STASH_HEADER_SIZE;
+                qint64 dataLength = inputFileLength - (inputOffset + STASH_FOOTER_SIZE);
 
                 outputBuffer.clear();
                 outputBuffer.fill(0, outputFileLength);
 
                 if (version >= 0x40)
                 {
-                    for (int i = 0; i < BASE_HEADER_SIZE; ++i)
+                    for (int i = 0; i < BASE_STASH_HEADER_SIZE; ++i)
                     {
                         outputBuffer[i] = inputBuffer[i];
                     }
@@ -143,13 +144,13 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
                 else
                 {
                     // just copy the data directly to the output buffer
-                    outputBuffer.resize(dataLength + BASE_HEADER_SIZE);
-                    outputBuffer.replace(0, dataLength + BASE_HEADER_SIZE, inputBuffer);
+                    outputBuffer.resize(dataLength + BASE_STASH_HEADER_SIZE);
+                    outputBuffer.replace(0, dataLength + BASE_STASH_HEADER_SIZE, inputBuffer);
                 }
 
                 if (version >= 0x41)
                 {
-                    qint32 claimedCRC = reinterpret_cast<const qint32*>(&(inputBuffer.data()[BASE_HEADER_SIZE]))[0];
+                    qint32 claimedCRC = reinterpret_cast<const qint32*>(&(inputBuffer.data()[BASE_STASH_HEADER_SIZE]))[0];
 
                     qint32 calculatedCRC = CalculateChecksum(outputBuffer, outputOffset, dataLength);
 
@@ -176,7 +177,7 @@ bool Torchlight2StashConverter::ScrambleFile(const QByteArray& inputBuffer, QByt
     qint64 inputFileLength = inputBuffer.size();
 
 
-    if (inputFileLength > BASE_HEADER_SIZE)
+    if (inputFileLength > BASE_STASH_HEADER_SIZE)
     {
         // offset 4 is almost always 0x01, except on corrupted character and stash files
         if ((quint8)inputBuffer[4] == 0x01)
@@ -196,6 +197,7 @@ bool Torchlight2StashConverter::ScrambleFile(const QByteArray& inputBuffer, QByt
                 }
 
                 case 0x42:
+                case 0x44:
                 {
                     break;
                 }
@@ -209,10 +211,10 @@ bool Torchlight2StashConverter::ScrambleFile(const QByteArray& inputBuffer, QByt
 
             if (isKnownSaveFileVersion)
             {
-                qint32 outputFileLength = inputFileLength + CRC_SIZE + FOOTER_SIZE;
-                quint32 inputOffset = BASE_HEADER_SIZE;
-                quint32 outputOffset = BASE_HEADER_SIZE + CRC_SIZE;
-                quint32 dataLength = inputFileLength - BASE_HEADER_SIZE;
+                qint32 outputFileLength = inputFileLength + STASH_CRC_SIZE + STASH_FOOTER_SIZE;
+                quint32 inputOffset = BASE_STASH_HEADER_SIZE;
+                quint32 outputOffset = BASE_STASH_HEADER_SIZE + STASH_CRC_SIZE;
+                quint32 dataLength = inputFileLength - BASE_STASH_HEADER_SIZE;
 
                 outputBuffer.clear();
                 outputBuffer.fill(0, outputFileLength);
@@ -226,7 +228,7 @@ bool Torchlight2StashConverter::ScrambleFile(const QByteArray& inputBuffer, QByt
 
                 quint32 crc = CalculateChecksum(inputBuffer, inputOffset, dataLength);
 
-                reinterpret_cast<quint32*>(&outputBuffer.data()[BASE_HEADER_SIZE])[0] = crc;
+                reinterpret_cast<quint32*>(&outputBuffer.data()[BASE_STASH_HEADER_SIZE])[0] = crc;
 
                 Scramble(inputBuffer, inputOffset, dataLength, outputBuffer, outputOffset);
 

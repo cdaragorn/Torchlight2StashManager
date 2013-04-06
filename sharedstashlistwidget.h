@@ -18,7 +18,10 @@ public:
     explicit SharedStashListWidget(QWidget *parent = 0);
     ~SharedStashListWidget();
 
-protected:
+    QListWidgetItem* GetDroppedItem(QPoint inPosition);
+    DropIndicatorPosition dropPosition() { return dropIndicatorPosition(); }
+
+protected slots:
     virtual void contextMenuEvent(QContextMenuEvent * inEvent);
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void itemChanged(QListWidgetItem *item);
@@ -28,6 +31,7 @@ private:
     QMenu* mContextMenu;
     
 signals:
+    void itemDropped(QDropEvent*);
     void dragEntered(QDragEnterEvent* event);
 
     

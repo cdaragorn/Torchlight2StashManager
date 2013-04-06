@@ -9,6 +9,7 @@
 #include <groupstable.h>
 #include <stashitemstable.h>
 #include <infinitestashstandarditemmodel.h>
+#include <torchlight2stash.h>
 
 
 namespace Ui
@@ -33,6 +34,8 @@ private:
     GroupsTable* mGroupsTable;
     StashItemsTable* mStashItemsTable;
 
+    Torchlight2Stash* mTorchlight2Stash;
+
 
     InfiniteStashStandardItemModel* mInfiniteStashModel;
 
@@ -49,6 +52,7 @@ private slots:
     void OnCreateNewStashClicked();
     void OnOptionsChanged();
     void OnInfiniteStashModelItemChanged(QStandardItem* inItem);
+    void OnInfiniteStashFolderChanged(QString folder);
 
 };
 

@@ -19,14 +19,16 @@ struct StashItem
 
 class StashItemsTable : public SqliteTable
 {
-    Q_OBJECT
 public:
-    explicit StashItemsTable(QString databaseName, QObject *parent = 0);
+    explicit StashItemsTable(QString databaseName);
+
+    void DatabasePath(QString filePath);
 
     qint64 AddStashItem(StashItem item);
     StashItem GetStashItem(qint64 itemId);
     QList<StashItem> GetItemsInGroup(qint64 groupId);
     bool UpdateGroup(StashItem item);
+    bool DeleteStashItem(qint64 itemId);
     
 signals:
     

@@ -32,7 +32,7 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -49,7 +49,7 @@
       </widget>
       <widget class="SettingsTabPageForm" name="SettingsTabPage">
        <attribute name="title">
-        <string>Page</string>
+        <string>Settings</string>
        </attribute>
       </widget>
      </widget>

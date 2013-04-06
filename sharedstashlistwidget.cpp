@@ -3,6 +3,8 @@
 #include <iostream>
 using namespace std;
 
+#include <QMimeData>
+
 SharedStashListWidget::SharedStashListWidget(QWidget *parent) :
     CustomListWidget(parent)
 {
@@ -33,6 +35,21 @@ void SharedStashListWidget::mousePressEvent(QMouseEvent *event)
     }
 }
 
+QListWidgetItem* SharedStashListWidget::GetDroppedItem(QPoint inPosition)
+{
+    QListWidgetItem* result = NULL;
+
+    QModelIndex itemIndex = indexAt(inPosition);
+    result = itemFromIndex(itemIndex);
+
+    if (dropIndicatorPosition() == QListWidget::BelowItem)
+    {
+        result = item(row(result) + 1);
+    }
+
+    return result;
+}
+
 void SharedStashListWidget::OnAction()
 {
     stringstream text;
@@ -60,6 +77,22 @@ void SharedStashListWidget::itemChanged(QListWidgetItem *item)
 void SharedStashListWidget::dropEvent(QDropEvent *event)
 {
     QListWidget::dropEvent(event);
+    itemDropped(event);
+
+//    if (dropIndicatorPosition() == QListWidget::BelowItem)
+//    {
+//        QListWidgetItem* itemOne = itemFromIndex(indexAt(event->pos()));
+//        QListWidgetItem* test = itemAt(event->pos());
+
+//        QListWidgetItem* testTwo = item(row(test) + 1);
+
+//        int f = 4;
+//    }
+
+//    if (item != NULL)
+//    {
+//        int f = 3;
+//    }
 //    if (event != NULL)
 //    {
 //        event->acceptProposedAction();
@@ -69,6 +102,25 @@ void SharedStashListWidget::dropEvent(QDropEvent *event)
 void SharedStashListWidget::dragEnterEvent(QDragEnterEvent *event)
 {
     QListWidget::dragEnterEvent(event);
+
+//    QByteArray modelList = event->mimeData()->data("application/x-qabstractitemmodeldatalist");
+//    QDataStream inputStream(&modelList, QIODevice::ReadOnly);
+
+//    while (!inputStream.atEnd())
+//    {
+//        int row;
+//        int col;
+//        QMap<int, QVariant> roleDataMap;
+//        inputStream >> row >> col >> roleDataMap;
+//        QVariant itemType = roleDataMap[Qt::UserRole + 1];
+//        QVariant itemData = roleDataMap[Qt::UserRole];
+
+////        if (itemType.toInt() == InfiniteStashStandardItemModel::Group)
+////        {
+////            event->ignore();
+////            event->setDropAction(Qt::IgnoreAction);
+////        }
+//    }
     dragEntered(event);
 }
 
