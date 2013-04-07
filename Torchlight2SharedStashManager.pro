@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     maintabpageform.cpp \
     settingstabpageform.cpp \
     managegroupstabpageform.cpp \
-    stashitemstable.cpp
+    stashitemstable.cpp \
+    stashitemdetailsview.cpp
 
 HEADERS  += mainwindow.h \
     sharedstashlistwidget.h \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     maintabpageform.h \
     settingstabpageform.h \
     managegroupstabpageform.h \
-    stashitemstable.h
+    stashitemstable.h \
+    stashitemdetailsview.h
 
 FORMS    += mainwindow.ui \
     maintabpageform.ui \

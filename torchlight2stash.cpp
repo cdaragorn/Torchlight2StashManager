@@ -65,7 +65,7 @@ void Torchlight2Stash::ClearNumberOfItemsInTabs()
 quint16 Torchlight2Stash::CalculateItemIndex(const Torchlight2Item &item)
 {
     qint32 tabIndexPosition = item.GetItemNameEndPosition();
-    qint16 tabIndex = convert<qint16>(&item.Bytes().data()[tabIndexPosition + 63]);
+    qint16 tabIndex = convert<qint16>(&item.Bytes().data()[tabIndexPosition + 67]);
     quint16 itemStashIndex = GeneralTabIndexStart;
 
     switch (tabIndex)

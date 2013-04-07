@@ -40,6 +40,9 @@ MainTabPageForm::MainTabPageForm(QWidget *parent) :
     connect(ui->Torchlight2SharedStashListWidget,
             SIGNAL(itemDropped(QDropEvent*)), this,
             SLOT(OnItemDroppedOnTorchlight2SharedStash(QDropEvent*)));
+
+    connect(ui->Torchlight2SharedStashListWidget, SIGNAL(currentRowChanged(int)),
+            this, SLOT(OnTorchlight2StashItemActivated(int)));
 }
 
 MainTabPageForm::~MainTabPageForm()
@@ -183,145 +186,6 @@ void MainTabPageForm::OnMaximumNumberOfItemsPerTabChanged(qint32 newMax)
         mTorchlight2Stash->MaximumNumberOfItemsPerTab(newMax);
 }
 
-//void MainTabPageForm::OnItemDroppedOnInfiniteStash(QDropEvent* event)
-//{
-//    QStringList types = event->mimeData()->formats();
-//    QStandardItem* itemDroppedOn = mInfiniteStashTreeViewModel->itemFromIndex(ui->InfiniteStashItemsTreeView->indexAt(event->pos()));
-
-//    if (itemDroppedOn != NULL)
-//    {
-//        for (int i = 0; i < itemDroppedOn->rowCount(); ++i)
-//        {
-//            QStandardItem* nextItem = itemDroppedOn->child(i);
-//            int what = 3;
-//        }
-//    }
-
-//    //need to provide an override in the item view, but this is how we can tell if the item(s) were actually dropped
-//    //on the parent  If it is not on the item (above or below it), then it will
-//    //add it to the item's parent
-////    QAbstractItemView::DropIndicatorPosition p = mInfiniteStashTreeView->dropIndicatorPosition();
-//    //If this is false, then the item was added to the dropped on item's parent
-//    bool wasOnItem = ui->InfiniteStashItemsTreeView->wasDropIndicatorOnItem();
-
-//    if (!wasOnItem)
-//    {
-//        itemDroppedOn = itemDroppedOn->parent();
-//    }
-
-//    if (event->source() == ui->Torchlight2SharedStashListWidget)
-//    {
-//        QList<QListWidgetItem*> selectedItems = ui->Torchlight2SharedStashListWidget->selectedItems();
-
-//        for (int i = 0; i < selectedItems.length(); ++i)
-//        {
-//            QListWidgetItem* currentItem = selectedItems[i];
-//            int o = 4;
-//        }
-
-//        //Find any children who have byte arrays stored in them and convert them
-//        for (int i = 0; i < itemDroppedOn->rowCount(); ++i)
-//        {
-//            QStandardItem* nextChild = itemDroppedOn->child(i);
-
-//            if (nextChild->type() == QVariant::ByteArray)
-//            {
-//                QString passed = "passed!";
-//            }
-//        }
-
-//        int w = 3;
-//    }
-//    else if (event->source() == ui->InfiniteStashItemsTreeView)
-//    {
-//        QModelIndex index = ui->InfiniteStashItemsTreeView->currentIndex();
-
-//        QStandardItem* nextItem = mInfiniteStashTreeViewModel->itemFromIndex(index);
-
-////        for (int i = 0; i < selectedIndexes.length(); ++i)
-////        {
-////            QStandardItem* nextItem = mInfiniteStashTreeViewModel->itemFromIndex(selectedIndexes[i]);
-////            int o = 3;
-////        }
-//        int l = 10;
-//    }
-
-//    QByteArray modelList = event->mimeData()->data("application/x-qabstractitemmodeldatalist");
-//    QDataStream inputStream(&modelList, QIODevice::ReadOnly);
-//    QByteArray outputBytes;
-//    QDataStream outputStream(&outputBytes, QIODevice::ReadWrite);
-
-//    while (!inputStream.atEnd())
-//    {
-//        int row;
-//        int col;
-//        QMap<int, QVariant> roleDataMap;
-//        inputStream >> row >> col >> roleDataMap;
-
-//        QListWidgetItem* testItem = ui->Torchlight2SharedStashListWidget->item(row);
-
-//        for (int i = 0; i < itemDroppedOn->rowCount(); ++i)
-//        {
-//            QStandardItem* nextChild = itemDroppedOn->child(i);
-
-//            QString byteArrayTypeName = QVariant::typeToName(QVariant::ByteArray);
-
-//            if (byteArrayTypeName.compare(nextChild->data(Qt::UserRole).typeName()))
-//            {
-//                QString passed = "passed!";
-//            }
-
-//            if (nextChild == (QStandardItem*)testItem)
-//            {
-//                int w = 5;
-//            }
-//        }
-
-//        QModelIndex index = mInfiniteStashTreeViewModel->index(row, col);
-//        QStandardItem* test2 = mInfiniteStashTreeViewModel->itemFromIndex(index);
-
-//        int j = 4;
-
-//        QVariant userData = roleDataMap[Qt::UserRole];
-
-//        userData.setValue(5);
-//        roleDataMap[Qt::UserRole] = userData;
-
-//        outputStream << row << col << roleDataMap;
-
-//        for (int i = 0; i < roleDataMap.keys().length(); ++i)
-//        {
-//            QVariant something = roleDataMap[roleDataMap.keys()[i]];
-//            QVariant test = roleDataMap[Qt::UserRole];
-//            if (something.canConvert(QVariant::ByteArray))
-//            {
-//                QByteArray what = something.toByteArray();
-//                int f = 3;
-//            }
-//        }
-//    }
-
-//    outputStream.device()->reset();
-//    outputStream.device()->close();
-
-
-
-//    while (!outputStream.atEnd())
-//    {
-//        int row;
-//        int col;
-//        QMap<int, QVariant> roleDataMap;
-//        outputStream >> row >> col >> roleDataMap;
-
-
-//        QVariant userData = roleDataMap[Qt::UserRole];
-//        int j = 4;
-
-
-//    }
-
-
-//}
 
 void MainTabPageForm::OnItemDroppedOnTorchlight2SharedStash(QDropEvent *event)
 {
@@ -414,4 +278,13 @@ void MainTabPageForm::OnItemDraggedToTorchlight2SharedStash(QDragEnterEvent* eve
         event->ignore();
         event->setDropAction(Qt::IgnoreAction);
     }
+}
+
+void MainTabPageForm::OnTorchlight2StashItemActivated(int row)
+{
+    QListWidgetItem* widgetItem = ui->Torchlight2SharedStashListWidget->item(row);
+
+    Torchlight2Item item(widgetItem->data(Qt::UserRole).toByteArray());
+    ui->StashItemDetailsGraphicsView->SetItemToDisplay(item);
+
 }

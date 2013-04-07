@@ -6,37 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>330</height>
+    <width>527</width>
+    <height>439</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="10,5,5,20" columnminimumwidth="0,0,50,0">
-   <item row="2" column="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="SharedStashItemCountLabel">
-     <property name="styleSheet">
-      <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
-     </property>
-     <property name="text">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="10,1,20,15" columnminimumwidth="0,0,50,0">
    <item row="0" column="3">
     <widget class="QLabel" name="InfiniteStashTitleLabel">
      <property name="text">
@@ -47,10 +24,13 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="SharedStashItemCountTitleLabel">
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="SharedStashTitleLabel">
      <property name="text">
-      <string>Total Items in Stash:</string>
+      <string>Torchlight 2 Shared Stash Items</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -67,16 +47,6 @@
      </property>
      <property name="selectionMode">
       <enum>QAbstractItemView::ExtendedSelection</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="SharedStashTitleLabel">
-     <property name="text">
-      <string>Torchlight 2 Shared Stash Items</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -99,6 +69,30 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="SharedStashItemCountTitleLabel">
+     <property name="text">
+      <string>Total Items in Stash:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="SharedStashItemCountLabel">
+     <property name="styleSheet">
+      <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="StashItemDetailsView" name="StashItemDetailsGraphicsView">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(0, 0, 0)</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -111,6 +105,11 @@
    <class>InfiniteStashTreeView</class>
    <extends>QTreeView</extends>
    <header>infinitestashtreeview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StashItemDetailsView</class>
+   <extends>QGraphicsView</extends>
+   <header>stashitemdetailsview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

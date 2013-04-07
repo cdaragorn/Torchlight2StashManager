@@ -20,6 +20,7 @@ public:
 
     QListWidgetItem* GetDroppedItem(QPoint inPosition);
     DropIndicatorPosition dropPosition() { return dropIndicatorPosition(); }
+    QListWidgetItem* ItemAtIndex(QModelIndex index) { return itemFromIndex(index); }
 
 protected slots:
     virtual void contextMenuEvent(QContextMenuEvent * inEvent);

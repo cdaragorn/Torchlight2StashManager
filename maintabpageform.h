@@ -70,6 +70,7 @@ private slots:
 //    void OnItemDroppedOnInfiniteStash(QDropEvent* event);
     void OnItemDroppedOnTorchlight2SharedStash(QDropEvent* event);
     void OnItemDraggedToTorchlight2SharedStash(QDragEnterEvent* event);
+    void OnTorchlight2StashItemActivated(int row);
     
 private:
     Ui::MainTabPageForm *ui;
