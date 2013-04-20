@@ -47,18 +47,8 @@ public:
         mStashItemsTable = inTable;
     }
 
-    void Options(OptionCollection* inOptions)
-    {
-        mOptions = inOptions;
+    void Options(OptionCollection* inOptions);
 
-        if (mOptions != NULL)
-        {
-            QString torchlight2StashFile = mOptions->Get(OptionKeys::Torchlight2SharedStashFile);
-            QString infiniteStashFolder = mOptions->Get(OptionKeys::StashManagerFolder);
-
-            FillSharedStashList(torchlight2StashFile);
-        }
-    }
 
 signals:
 

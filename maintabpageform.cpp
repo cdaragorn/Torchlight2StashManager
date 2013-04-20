@@ -60,6 +60,21 @@ void MainTabPageForm::SetInfiniteStashStandardItemModel(InfiniteStashStandardIte
     }
 }
 
+void MainTabPageForm::Options(OptionCollection *inOptions)
+{
+    mOptions = inOptions;
+
+    if (mOptions != NULL)
+    {
+        QString torchlight2StashFile = mOptions->Get(OptionKeys::Torchlight2SharedStashFile);
+        QString infiniteStashFolder = mOptions->Get(OptionKeys::StashManagerFolder);
+
+        ui->StashItemDetailsGraphicsView->InfiniteStashLocation(infiniteStashFolder);
+
+        FillSharedStashList(torchlight2StashFile);
+    }
+}
+
 void MainTabPageForm::FillSharedStashList(QString inTorchlight2SharedStashFile)
 {
 

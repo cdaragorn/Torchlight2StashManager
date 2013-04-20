@@ -21,7 +21,6 @@ static quint32 CalculateChecksum(const QByteArray& buffer, qint64 offset, qint64
     {
         checksum += (checksum << 0x5);
         checksum += (quint8)buffer.constData()[offset + i];
-//        checksum &= 0xFFFFFFFF; // (mask in case an int is 64bits somehow)
     }
     return checksum;
 }
@@ -159,7 +158,7 @@ bool Torchlight2StashConverter::DescrambleFile(const QByteArray& inputBuffer, QB
 
                 qint32 lengthClaimed = reinterpret_cast<const qint32*>(&(inputBuffer.data()[inputFileLength - 4]))[0];
 
-                qDebug() << lengthClaimed;
+                qDebug() << "Claimed file length: " << lengthClaimed;
 
                 result = true;
             }

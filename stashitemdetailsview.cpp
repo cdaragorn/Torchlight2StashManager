@@ -12,7 +12,10 @@ StashItemDetailsView::StashItemDetailsView(QWidget *parent) :
 
 void StashItemDetailsView::SetItemToDisplay(Torchlight2Item item)
 {
-    QGraphicsScene* scene = new QGraphicsScene();
+    item.ParseAdvancedItemDetails(mInfiniteStashLocation);
+    QGraphicsScene* newScene = new QGraphicsScene();
+
+    quint32 nextItemYPos = 0;
 
     QGraphicsTextItem* itemName = new QGraphicsTextItem();
 
@@ -20,32 +23,76 @@ void StashItemDetailsView::SetItemToDisplay(Torchlight2Item item)
     titleFont.setBold(true);
     QFont listFont();
 
-    itemName->setPos(0, 0);
+    itemName->setPos(0, nextItemYPos);
     QColor color(255, 255, 255);
     itemName->setDefaultTextColor(color);
     itemName->setPlainText(item.Name());
     itemName->setFont(titleFont);
 
-    QGraphicsTextItem* itemNumSockets =
-            new QGraphicsTextItem("Number of Sockets: " +
-                                  QString::number(item.NumSockets()));
+    nextItemYPos = itemName->boundingRect().height();
+    newScene->addItem(itemName);
 
-    itemNumSockets->setDefaultTextColor(color);
-    itemNumSockets->setPos(0, itemName->boundingRect().height());
 
-    QGraphicsTextItem* itemNumFilledSockets =
-            new QGraphicsTextItem("Number of filled Sockets: " +
-                                  QString::number(item.NumFilledSockets()));
+    qint32 numEmptySockets = item.NumSockets() - item.NumFilledSockets();
 
-    itemNumFilledSockets->setDefaultTextColor(color);
-    itemNumFilledSockets->setPos(0, itemNumSockets->y() + itemNumSockets->boundingRect().height());
+    for (qint32 i = 0; i < numEmptySockets; ++i)
+    {
+        QGraphicsTextItem* nextEmptySocket =
+                new QGraphicsTextItem("Empty Socket");
+        nextEmptySocket->setDefaultTextColor(color);
+        nextEmptySocket->setPos(0, nextItemYPos);
+        nextItemYPos += nextEmptySocket->boundingRect().height();
+        newScene->addItem(nextEmptySocket);
+    }
 
-    scene->addItem(itemName);
-    scene->addItem(itemNumSockets);
-    scene->addItem(itemNumFilledSockets);
+    for (qint32 i = 0; i < item.NumFilledSockets(); ++i)
+    {
+        QGraphicsTextItem* nextSocketedItem =
+                new QGraphicsTextItem("Socket (" + item.SocketedItems()[i].name + ")");
+        nextSocketedItem->setDefaultTextColor(color);
+        nextSocketedItem->setPos(0, nextItemYPos);
+        nextItemYPos += nextSocketedItem->boundingRect().height();
 
-//    scene->setSceneRect(this->geometry());
+        newScene->addItem(nextSocketedItem);
 
-    this->setScene(scene);
-    this->show();
+        QGraphicsTextItem* socketEffect =
+                new QGraphicsTextItem(item.SocketedItems()[i].effect);
+        socketEffect->setDefaultTextColor(color);
+        socketEffect->setPos(10, nextItemYPos);
+        nextItemYPos += socketEffect->boundingRect().height();
+
+        newScene->addItem(socketEffect);
+    }
+
+//    QGraphicsTextItem* itemNumSockets =
+//            new QGraphicsTextItem("Number of Sockets: " +
+//                                  QString::number(item.NumSockets()));
+
+//    itemNumSockets->setDefaultTextColor(color);
+//    itemNumSockets->setPos(0, itemName->boundingRect().height());
+
+//    QGraphicsTextItem* itemNumFilledSockets =
+//            new QGraphicsTextItem("Number of filled Sockets: " +
+//                                  QString::number(item.NumFilledSockets()));
+
+//    itemNumFilledSockets->setDefaultTextColor(color);
+//    itemNumFilledSockets->setPos(0, itemNumSockets->y() + itemNumSockets->boundingRect().height());
+
+//    newScene->addItem(itemNumSockets);
+//    newScene->addItem(itemNumFilledSockets);
+
+    QGraphicsScene* oldScene = this->scene();
+    this->setScene(newScene);
+
+    if (oldScene != NULL)
+    {
+//        QList<QGraphicsItem*> oldItems = oldScene->items();
+
+//        for (int i = 0; i < oldItems.length(); ++i)
+//        {
+//            delete oldItems[i];
+//        }
+
+        delete oldScene;
+    }
 }

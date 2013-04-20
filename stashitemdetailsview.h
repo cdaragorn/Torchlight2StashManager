@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QGraphicsView>
+#include <QDir>
 
 #include <torchlight2item.h>
 
@@ -13,10 +14,18 @@ public:
     explicit StashItemDetailsView(QWidget *parent = 0);
 
     void SetItemToDisplay(Torchlight2Item item);
+
+    void InfiniteStashLocation(QString infiniteStashFolder)
+    {
+        mInfiniteStashLocation.setPath(infiniteStashFolder);
+    }
     
 signals:
     
 public slots:
+
+private:
+    QDir mInfiniteStashLocation;
     
 };
 
